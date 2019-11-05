@@ -3,7 +3,8 @@ cd ./unicorn_mode
 sudo ./build_unicorn_support.sh
 cd ..
 cd hal_fuzz
-sudo pip3 install -e .
+pip3 install -r requirements.txt
+pip3 install -e .
 cd hal_fuzz/native
 make
 cd ../../../
