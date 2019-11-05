@@ -1,0 +1,221 @@
+mmio_models:
+  bitextract:
+    pc_00000b98_mmio_40090a30:
+      addr: 0x40090a30
+      left_shift: 0x8
+      mask: 0x800
+      pc: 0xb98
+      size: 0x1
+  constant:
+    pc_0000028a_mmio_40090408:
+      addr: 0x40090408
+      pc: 0x28a
+      val: 0x1
+    pc_000002c6_mmio_40090408:
+      addr: 0x40090408
+      pc: 0x2c6
+      val: 0x2
+    pc_00000a98_mmio_40039004:
+      addr: 0x40039004
+      pc: 0xa98
+      val: 0x0
+    pc_00000b60_mmio_40080100:
+      addr: 0x40080100
+      pc: 0xb60
+      val: 0x10000
+  passthrough:
+    pc_0000024c_mmio_4000011c:
+      addr: 0x4000011c
+      init_val: 0x0
+      pc: 0x24c
+    pc_0000025a_mmio_4000015c:
+      addr: 0x4000015c
+      init_val: 0x0
+      pc: 0x25a
+    pc_00000264_mmio_4000009c:
+      addr: 0x4000009c
+      init_val: 0x0
+      pc: 0x264
+    pc_000002ae_mmio_40090400:
+      addr: 0x40090400
+      init_val: 0x0
+      pc: 0x2ae
+    pc_000002be_mmio_40090400:
+      addr: 0x40090400
+      init_val: 0x0
+      pc: 0x2be
+    pc_000002cc_mmio_40090404:
+      addr: 0x40090404
+      init_val: 0x0
+      pc: 0x2cc
+    pc_0000088e_mmio_40090c40:
+      addr: 0x40090c40
+      init_val: 0x0
+      pc: 0x88e
+    pc_000008d8_mmio_4000009c:
+      addr: 0x4000009c
+      init_val: 0x34
+      pc: 0x8d8
+    pc_00000944_mmio_40039000:
+      addr: 0x40039000
+      init_val: 0x0
+      pc: 0x944
+    pc_000009a4_mmio_40039000:
+      addr: 0x40039000
+      init_val: 0x0
+      pc: 0x9a4
+    pc_00000b4a_mmio_40090540:
+      addr: 0x40090540
+      init_val: 0x0
+      pc: 0xb4a
+    pc_00000b68_mmio_40080100:
+      addr: 0x40080100
+      init_val: 0x0
+      pc: 0xb68
+    pc_00000b7a_mmio_40090540:
+      addr: 0x40090540
+      init_val: 0x0
+      pc: 0xb7a
+    pc_00000b9a_mmio_40090a30:
+      addr: 0x40090a30
+      init_val: 0x0
+      pc: 0xb9a
+    pc_00000bae_mmio_40090a44:
+      addr: 0x40090a44
+      init_val: 0x0
+      pc: 0xbae
+    pc_00000bc2_mmio_40090a44:
+      addr: 0x40090a44
+      init_val: 0x0
+      pc: 0xbc2
+    pc_00000bc4_mmio_40054048:
+      addr: 0x40054048
+      init_val: 0x0
+      pc: 0xbc4
+    pc_00000bd8_mmio_40054044:
+      addr: 0x40054044
+      init_val: 0x0
+      pc: 0xbd8
+    pc_00000c0e_mmio_40054044:
+      addr: 0x40054044
+      init_val: 0x0
+      pc: 0xc0e
+    pc_00000c12_mmio_40090a44:
+      addr: 0x40090a44
+      init_val: 0x0
+      pc: 0xc12
+    pc_00000c4e_mmio_4005200c:
+      addr: 0x4005200c
+      init_val: 0x0
+      pc: 0xc4e
+    pc_00000c54_mmio_4005300c:
+      addr: 0x4005300c
+      init_val: 0x0
+      pc: 0xc54
+    pc_00000c5a_mmio_400e0090:
+      addr: 0x400e0090
+      init_val: 0x0
+      pc: 0xc5a
+    pc_00000c64_mmio_400e0094:
+      addr: 0x400e0094
+      init_val: 0x0
+      pc: 0xc64
+    pc_00000c72_mmio_400e0034:
+      addr: 0x400e0034
+      init_val: 0x0
+      pc: 0xc72
+    pc_00000c78_mmio_400e0034:
+      addr: 0x400e0034
+      init_val: 0x0
+      pc: 0xc78
+    pc_00000c80_mmio_400e0038:
+      addr: 0x400e0038
+      init_val: 0x0
+      pc: 0xc80
+    pc_00000c86_mmio_400e0038:
+      addr: 0x400e0038
+      init_val: 0x0
+      pc: 0xc86
+    pc_00000c94_mmio_400e008c:
+      addr: 0x400e008c
+      init_val: 0x0
+      pc: 0xc94
+    pc_00000cc2_mmio_40090a30:
+      addr: 0x40090a30
+      init_val: 0x0
+      pc: 0xcc2
+    pc_00000ccc_mmio_40090a30:
+      addr: 0x40090a30
+      init_val: 0x0
+      pc: 0xccc
+    pc_00000cda_mmio_40090404:
+      addr: 0x40090404
+      init_val: 0x0
+      pc: 0xcda
+  set:
+    pc_0000020a_mmio_40090444:
+      addr: 0x40090444
+      pc: 0x20a
+      vals:
+      - 0x0
+      - 0x1
+    pc_00000290_mmio_40090400:
+      addr: 0x40090400
+      pc: 0x290
+      vals:
+      - 0x0
+      - 0x1
+    pc_00000882_mmio_40090c44:
+      addr: 0x40090c44
+      pc: 0x882
+      vals:
+      - 0x0
+      - 0x12
+    pc_00000896_mmio_40090c44:
+      addr: 0x40090c44
+      pc: 0x896
+      vals:
+      - 0x0
+      - 0x12
+    pc_00000b08_mmio_40090404:
+      addr: 0x40090404
+      pc: 0xb08
+      vals:
+      - 0x0
+      - 0x2
+      - 0x4
+      - 0x6
+    pc_00000ba4_mmio_400e0034:
+      addr: 0x400e0034
+      pc: 0xba4
+      vals:
+      - 0x0
+      - 0x1
+    pc_00000ba8_mmio_400e0034:
+      addr: 0x400e0034
+      pc: 0xba8
+      vals:
+      - 0x0
+      - 0xffffffff
+    pc_00000c6e_mmio_400e0034:
+      addr: 0x400e0034
+      pc: 0xc6e
+      vals:
+      - 0x0
+      - 0x1
+    pc_00000c7c_mmio_400e0038:
+      addr: 0x400e0038
+      pc: 0xc7c
+      vals:
+      - 0x0
+      - 0x1
+  unmodeled:
+    pc_00000b1e_mmio_40090440:
+      addr: 0x40090440
+      pc: 0xb1e
+    pc_00000c8e_mmio_400e0088:
+      addr: 0x400e0088
+      pc: 0xc8e
+    pc_000010c8_mmio_42003384:
+      addr: 0x42003384
+      pc: 0x10c8

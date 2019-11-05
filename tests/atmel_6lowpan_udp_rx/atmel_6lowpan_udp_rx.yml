@@ -1,0 +1,27 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/atmel_asf_v3.yml
+  - ./../../configs/hals/contiki.yml
+  - ./atmel_6lowpan_udp_rx_addrs.yml
+memory_map:
+  ivt: {base_addr: 0x0, file: ./atmel_6lowpan_udp_rx.bin,
+    permissions: r-x, size: 0x800000}
+  flash: {base_addr: 0x8000000, file: ./atmel_6lowpan_udp_rx.bin,
+    permissions: r-x, size: 0x200000}
+  samr21_addrs: {base_addr: 0x80A000, permissions: "rw-", size: 0x1000}
+
+handlers:
+  system_clock_init:
+    handler:
+    addr: 0x00001EB0
+  i2c_master_read_packet_wait:
+    handler: hal_fuzz.handlers.rf233.get_edbg_eui64
+  uip_tcpchksum:
+    handler: hal_fuzz.handlers.contiki.uip_chksum_fake
+  uip_udpchksum:
+    handler: hal_fuzz.handlers.contiki.uip_chksum_fake
+  uip_icmp6chksum:
+    handler: hal_fuzz.handlers.contiki.uip_chksum_fake
+
+  clock_init:
+    handler: hal_fuzz.handlers.misc.atmel_6lowpan.clock_init

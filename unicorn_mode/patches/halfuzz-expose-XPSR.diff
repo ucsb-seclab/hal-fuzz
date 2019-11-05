@@ -1,0 +1,48 @@
+diff -ur unicorn-1.0.1-a/bindings/python/unicorn/arm_const.py unicorn-1.0.1-b/bindings/python/unicorn/arm_const.py
+--- unicorn-1.0.1-a/bindings/python/unicorn/arm_const.py	2019-01-23 20:02:03.643547100 -0800
++++ unicorn-1.0.1-b/bindings/python/unicorn/arm_const.py	2019-01-23 20:06:27.561324500 -0800
+@@ -116,8 +116,7 @@
+ UC_ARM_REG_C1_C0_2 = 111
+ UC_ARM_REG_C13_C0_2 = 112
+ UC_ARM_REG_C13_C0_3 = 113
+-UC_ARM_REG_XPSR = 114
+-UC_ARM_REG_ENDING = 115
++UC_ARM_REG_ENDING = 114
+ 
+ # alias registers
+ UC_ARM_REG_R13 = 12
+diff -ur unicorn-1.0.1-a/include/unicorn/arm.h unicorn-1.0.1-b/include/unicorn/arm.h
+--- unicorn-1.0.1-a/include/unicorn/arm.h	2019-01-23 20:03:58.065830200 -0800
++++ unicorn-1.0.1-b/include/unicorn/arm.h	2019-01-23 20:06:27.580101000 -0800
+@@ -129,7 +129,6 @@
+ 	UC_ARM_REG_C1_C0_2,
+ 	UC_ARM_REG_C13_C0_2,
+ 	UC_ARM_REG_C13_C0_3,
+-    UC_ARM_REG_XPSR,
+ 
+ 	UC_ARM_REG_ENDING,		// <-- mark the end of the list or registers
+ 
+diff -ur unicorn-1.0.1-a/qemu/target-arm/unicorn_arm.c unicorn-1.0.1-b/qemu/target-arm/unicorn_arm.c
+--- unicorn-1.0.1-a/qemu/target-arm/unicorn_arm.c	2019-01-23 20:02:03.645258200 -0800
++++ unicorn-1.0.1-b/qemu/target-arm/unicorn_arm.c	2019-01-23 20:06:27.651630600 -0800
+@@ -61,9 +61,6 @@
+             *(float64 *)value = ARM_CPU(uc, mycpu)->env.vfp.regs[regid - UC_ARM_REG_D0];
+         else {
+             switch(regid) {
+-                case UC_ARM_REG_XPSR:
+-                    *(int32_t *)value = xpsr_read(&ARM_CPU(uc, mycpu)->env);
+-                    break;
+                 case UC_ARM_REG_APSR:
+                     *(int32_t *)value = cpsr_read(&ARM_CPU(uc, mycpu)->env) & CPSR_NZCV;
+                     break;
+@@ -112,9 +109,6 @@
+             ARM_CPU(uc, mycpu)->env.vfp.regs[regid - UC_ARM_REG_D0] = *(float64 *)value;
+         else {
+             switch(regid) {
+-                case UC_ARM_REG_XPSR:
+-                    xpsr_write(&ARM_CPU(uc, mycpu)->env, *(uint32_t *)value, 0xffffffffu);
+-                    break;
+                 case UC_ARM_REG_APSR:
+                     cpsr_write(&ARM_CPU(uc, mycpu)->env, *(uint32_t *)value, CPSR_NZCV);
+                     break;
+Only in unicorn-1.0.1-a/qemu/target-arm: unicorn_arm.c.orig

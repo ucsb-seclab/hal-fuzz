@@ -1,0 +1,14 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./blink.ino_addrs.yml
+
+memory_map:
+  flash: {base_addr: 0x80000, file: ./blink.ino.bin,
+    permissions: r-x, size: 0x800000}
+
+use_nvic: False
+use_timers: False
+
+#handlers:
+#  dummy:
+#    handler: 

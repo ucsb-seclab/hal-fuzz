@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<tests>
+    <bug id="0">
+        <name>dummy</name>
+        <description>A dummy for testing correctness</description>
+        <trigger>none</trigger>
+    </bug>
+    <bug id="1">
+        <name>format string</name>
+        <description>Using %n to write to arbitrary addresses</description>
+        <trigger>Using format specifier in the id field</trigger>
+    </bug>
+    <bug id="2">
+        <name>heap based buffer overflow</name>
+        <description>Overflowing into another chunk on the heap</description>
+        <trigger>Using an xml length of 1220</trigger>
+    </bug>
+    <bug id="3">
+        <name>double free</name>
+        <description>Freeing a heap chunk twice</description>
+        <trigger>Using an xml length of 1221</trigger>
+    </bug>
+    <bug id="4">
+        <name>stack based buffer overflow</name>
+        <description>Overflowing a buffer on the stack to overwrite EIP</description>
+        <trigger>Using an xml length of 1222</trigger>
+    </bug>
+    <bug id="5">
+        <name>null pointer derefence</name>
+        <description>Setting a pointer to 0 and accessing it later on</description>
+        <trigger>Using an xml length of 1223</trigger>
+    </bug>
+</tests>
+    
+

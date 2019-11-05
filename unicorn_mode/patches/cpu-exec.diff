@@ -1,0 +1,30 @@
+--- unicorn_1.0.1/qemu/cpu-exec.c.orig	2017-04-20 02:14:24.000000000 -0400
++++ unicorn-1.0.1/qemu/cpu-exec.c	2017-06-21 18:30:51.479817410 -0400
+@@ -24,6 +24,9 @@
+ 
+ #include "uc_priv.h"
+ 
++#include "../../patches/afl-unicorn-cpu-inl.h"
++static int afl_first_instr = 0;
++
+ static tcg_target_ulong cpu_tb_exec(CPUState *cpu, uint8_t *tb_ptr);
+ static TranslationBlock *tb_find_slow(CPUArchState *env, target_ulong pc,
+         target_ulong cs_base, uint64_t flags);
+@@ -228,6 +231,8 @@
+                             next_tb & TB_EXIT_MASK, tb);
+                 }
+ 
++                AFL_UNICORN_CPU_SNIPPET2;
++
+                 /* cpu_interrupt might be called while translating the
+                    TB, but before it is linked into a potentially
+                    infinite loop and becomes env->current_tb. Avoid
+@@ -367,6 +372,8 @@
+     /* if no translated code available, then translate it now */
+     tb = tb_gen_code(cpu, pc, cs_base, flags, 0);   // qq
+ 
++    AFL_UNICORN_CPU_SNIPPET1;
++
+ found:
+     /* Move the last found TB to the head of the list */
+     if (likely(*ptb1)) {

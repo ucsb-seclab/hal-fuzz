@@ -1,0 +1,35 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/mbed.yml
+  - ./Nucleo_blink_led_addrs.yml
+
+use_nvic: False
+use_timers: False
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./Nucleo_blink_led.bin,
+    permissions: r-x, size: 0x800000}
+  flash: {base_addr: 0x8000000, file: ./Nucleo_blink_led.bin,
+    permissions: r-x, size: 0x200000}
+  
+
+#handlers:
+#   dummy:
+#     handler:
+#  HAL_InitTick:
+#    handler:
+#    do_return: True
+#  mbed_sdk_init:
+#    handler:
+#    do_return: True
+#  us_ticker_irq_handler:
+#    handler: hal_fuzz.handlers.misc.blink_led.handle_timeup
+#    do_return: False
+#  _ZN4mbed6Ticker5setupEy:
+#    handler: hal_fuzz.handlers.misc.blink_led.register_timer
+#    do_return: False
+#  _Z10led_switchv:
+#    handler: hal_fuzz.handlers.misc.blink_led.blink_led
+#  WWDG_IRQHandler:
+#    handler: hal_fuzz.handlers.misc.blink_led.bad_stuff
+#    do_return: False

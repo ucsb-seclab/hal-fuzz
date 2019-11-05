@@ -1,0 +1,12 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/atmel_asf_v3.yml
+  - ./samr21_http_addrs.yml
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./samr21_http.bin,
+    permissions: r-x, size: 0x800000}
+
+handlers:
+  tcp_next_iss:
+    handler: hal_fuzz.handlers.lwip.tcp_next_iss_hack

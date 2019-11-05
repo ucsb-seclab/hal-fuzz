@@ -1,0 +1,12 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/riot.yml
+  - ./p2im_console_addrs.yml
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./p2im_console.bin,
+    permissions: r-x, size: 0x800000}
+  bss: {base_addr: 0x1fff0000, permissions: rWx, size: 0x10000}
+
+use_timers: True
+use_nvic: True

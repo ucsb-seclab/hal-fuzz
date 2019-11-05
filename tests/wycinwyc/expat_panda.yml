@@ -1,0 +1,26 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/mbed.yml
+  - ./expat_panda_addrs.yml
+
+memory_map:
+  flash: {base_addr: 0x8000000, file: expat_panda.bin,
+    permissions: r-x, size: 0x200000}
+
+handlers:
+  serial_getc:
+    handler: hal_fuzz.handlers.fuzz.return_fuzz_byte
+  _ZN4mbed6Stream4getcEv:
+    handler: hal_fuzz.handlers.fuzz.return_fuzz_byte
+  malloc:
+    handler: hal_fuzz.handlers.generic.malloc.malloc
+    addr: 0x0800E968
+  free:
+    handler: hal_fuzz.handlers.generic.malloc.free
+    addr: 0x0800E978
+  calloc:
+    handler: hal_fuzz.handlers.generic.malloc.calloc
+    addr: 0x08013524
+  realloc:
+    handler: hal_fuzz.handlers.generic.malloc.realloc
+    addr: 0x080103D0

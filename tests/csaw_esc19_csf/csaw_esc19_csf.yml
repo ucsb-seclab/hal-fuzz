@@ -1,0 +1,17 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/arduino.yml
+  - ./csaw_esc19_csf_addrs.yml
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./csaw_esc19_csf.bin,
+    permissions: r-x, size: 0x800000}
+  bss: {base_addr: 0x1fff8000, permissions: r-x, size: 0x8000}
+packet_serial: True
+use_timers: True
+use_nvic: True
+packet_i2c: True
+
+handlers:
+  _Z16debugPrintPacket6packet:
+    handler:

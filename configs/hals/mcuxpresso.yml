@@ -1,0 +1,29 @@
+memory_map:
+  nxp_rom: {base_addr: 0x1fff0000, size: 0x10000, permissions: rwx}
+
+
+handlers:
+  CLOCK_InitOsc0:
+    handler:
+  CLOCK_SetInternalRefClkConfig:
+    handler:
+  CLOCK_BootToPeeMode:
+    handler:
+  UART_WriteBlocking:
+    handler: hal_fuzz.handlers.mcuxpresso.UART_WriteBlocking
+  UART_ReadBlocking:
+    handler: hal_fuzz.handlers.mcuxpresso.UART_ReadBlocking
+  PHY_Init:
+    handler: hal_fuzz.handlers.generic.return_zero
+  ENET_GetRxFrameSize:
+    handler: hal_fuzz.handlers.mcuxpresso.ENET_GetRxFrameSize
+  ENET_SendFrame:
+    handler: hal_fuzz.handlers.mcuxpresso.ENET_SendFrame
+  ENET_ReadFrame:
+    handler: hal_fuzz.handlers.mcuxpresso.ENET_ReadFrame
+  PHY_GetLinkStatus:
+    handler: hal_fuzz.handlers.mcuxpresso.PHY_GetLinkStatus
+  PHY_GetLinkSpeedDuplex:
+    handler: hal_fuzz.handlers.mcuxpresso.PHY_GetLinkSpeedDuplex
+  sys_now:
+    handler: hal_fuzz.handlers.mcuxpresso.sys_now

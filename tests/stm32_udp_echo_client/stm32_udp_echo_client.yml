@@ -1,0 +1,48 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/stm32f4_hal.yml
+  - ./stm32_udp_echo_client_addrs.yml
+
+use_timers: False
+use_nvic: False
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./stm32_udp_echo_client.bin,
+    permissions: r-x, size: 0x800000}
+  rom: {base_addr: 0x08000000, file: ./stm32_udp_echo_client.bin,
+    permissions: r-x, size: 0x800000}
+
+handlers:
+  BSP_IO_ConfigPin:
+    handler: 
+  tcp_next_iss:
+    handler: hal_fuzz.handlers.lwip.tcp_next_iss_hack
+
+  ethernetif_input:
+    handler: hal_fuzz.handlers.misc.stm32f4_eth_client.inject_button_click_once
+    do_return: False
+  HAL_GetTick:
+    handler: hal_fuzz.handlers.misc.stm32f4_eth_client.HAL_GetTick
+
+  I2C_WaitOnFlagUntilTimeout:
+    handler: hal_fuzz.handlers.generic.return_zero
+  I2C_WaitOnMasterAddressFlagUntilTimeout:
+    handler: hal_fuzz.handlers.generic.return_zero
+  I2C_WaitOnTXEFlagUntilTimeout:
+    handler: hal_fuzz.handlers.generic.return_zero
+  I2C_WaitOnBTFFlagUntilTimeout:
+    handler: hal_fuzz.handlers.generic.return_zero
+  I2C_WaitOnRXNEFlagUntilTimeout:
+    handler: hal_fuzz.handlers.generic.return_zero
+
+  HAL_ETH_TransmitFrame:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_eth.HAL_ETH_TransmitFrame
+  HAL_ETH_GetReceivedFrame:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_eth.HAL_ETH_GetReceivedFrame
+  HAL_ETH_WritePHYRegister:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_eth.HAL_ETH_WritePHYRegister
+  HAL_ETH_ReadPHYRegister:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_eth.HAL_ETH_ReadPHYRegister
+  
+
+  

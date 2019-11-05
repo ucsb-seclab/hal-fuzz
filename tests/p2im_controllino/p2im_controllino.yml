@@ -1,0 +1,15 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/stm32f4_hal.yml
+  - ./../../configs/hals/arduino.yml
+  - ./p2im_controllino_addrs.yml
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./p2im_controllino.bin,
+    permissions: r-x, size: 0x800000}
+  flash: {base_addr: 0x08000000, file: ./p2im_controllino.bin,
+    permissions: r-x, size: 0x800000}
+
+packet_serial: True
+use_timers: True
+use_nvic: True

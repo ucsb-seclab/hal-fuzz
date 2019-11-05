@@ -1,0 +1,105 @@
+handlers:
+
+
+  delay:
+    handler:
+  SystemInit:
+    handler:
+  # This should totally null out the board-specific init, if we're using this HAL
+  # we probably don't care
+  # If we can't find it, assume we pair this with a lower-level HAL.
+  #init:
+  #  handler:
+  _Z7premainv:
+    handler:
+
+  # Timers
+  _ZN13HardwareTimerC2EP11TIM_TypeDef:
+    handler: hal_fuzz.handlers.arduino.Timer._ZN13HardwareTimerC2EP11TIM_TypeDef
+  _ZN13HardwareTimer7setModeEm12TimerModes_t7PinName:
+    handler: hal_fuzz.handlers.arduino.Timer._ZN13HardwareTimer7setModeEm12TimerModes_t7PinName
+  _ZN13HardwareTimer17setPrescaleFactorEm:
+    handler: hal_fuzz.handlers.arduino.Timer._ZN13HardwareTimer17setPrescaleFactorEm
+  _ZN13HardwareTimer6resumeEv:
+    handler: hal_fuzz.handlers.arduino.Timer._ZN13HardwareTimer6resumeEv
+  _ZN13HardwareTimer15getTimerClkFreqEv:
+    handler: hal_fuzz.handlers.arduino.Timer._ZN13HardwareTimer15getTimerClkFreqEv
+  _ZN13HardwareTimer15attachInterruptEPFvPS_E:
+    handler: hal_fuzz.handlers.arduino.Timer._ZN13HardwareTimer15attachInterruptEPFvPS_E
+  millis:
+    handler: hal_fuzz.handlers.arduino.Timer.millis
+  micros:
+    handler: hal_fuzz.handlers.arduino.Timer.micros
+
+  # Serial
+  _ZN14HardwareSerial5beginEmh:
+    handler:
+  _ZN15HardwareSerial25beginEm:
+    handler:
+  _ZN14HardwareSerial4readEv:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN14HardwareSerial4readEv
+  _ZN9UARTClass4readEv:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN14HardwareSerial4readEv
+  _ZN14HardwareSerial5writeEh:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN5Print5printEii
+  _ZN9UARTClass5writeEh:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN5Print5printEii
+  _ZN5Print7printlnEPKc:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN5Print7printlnEPKc
+  _ZN5Print7printlnEv:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN5Print7printlnEPKc
+  _ZN5Print7printlnEi:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN5Print7printlnEPKc
+  _ZN5Print5printEc:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN5Print7printlnEPKc
+  _ZN14HardwareSerial9availableEv:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN14HardwareSerial9availableEv
+  _ZN9UARTClass9availableEv:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN14HardwareSerial9availableEv
+  _ZN16usb_serial_class9availableEv:
+    handler: hal_fuzz.handlers.generic.return_zero
+  _ZN5Print5printEPKc:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN5Print5printEii
+  _ZN5Print5printEh:
+    handler: hal_fuzz.handlers.arduino.Serial._ZN5Print5printEii
+  # GPIO:
+  _Z7pulseInmmm:
+    handler: hal_fuzz.handlers.arduino.GPIO._Z7pulseInmmm
+  pinMode:
+    handler: hal_fuzz.handlers.arduino.GPIO.pinMode
+  digitalRead:
+    handler: hal_fuzz.handlers.arduino.GPIO.digitalRead
+  digitalWrite:
+    handler: hal_fuzz.handlers.arduino.GPIO.digitalWrite
+
+  # Servo
+  _ZN5ServoC2Ev:
+    handler: hal_fuzz.handlers.arduino.Servo._ZN5ServoC2Ev
+  _ZN5Servo6attachEi:
+    handler: hal_fuzz.handlers.arduino.Servo._ZN5Servo6attachEi
+  _ZN5Servo5writeEi:
+    handler: hal_fuzz.handlers.arduino.Servo._ZN5Servo5writeEi
+
+  #Wire/I2C
+  # These are for Teensy's own I2C lib
+  _ZN6i2c_t35beginE8i2c_modeh8i2c_pins10i2c_pullupm11i2c_op_mode:
+    handler: hal_fuzz.handlers.arduino.Wire.i2c_t3_begin
+  #  for async slave use
+  _ZN6i2c_t39onReceiveEPFvjE:
+    handler: hal_fuzz.handlers.arduino.Wire.i2c_t3_on_receive
+  _ZN6i2c_t39onRequestEPFvvE:
+    handler: hal_fuzz.handlers.arduino.Wire.i2c_t3_on_request
+  _ZN6i2c_t35writeEPKcj:
+    handler: hal_fuzz.handlers.arduino.Wire.i2c_t3_write_buf
+  _ZN6i2c_t35writeEi:
+    handler: hal_fuzz.handlers.arduino.Wire.i2c_t3_write
+  _ZN6i2c_t34readEPcj:
+    handler: hal_fuzz.handlers.arduino.Wire.i2c_t3_read_buf
+
+  # Analog
+  analogRead:
+    handler: hal_fuzz.handlers.generic.return_zero
+
+  # Fixups
+  _ZN6Modbus7calcCRCEh:
+    handler: hal_fuzz.handlers.generic.return_zero

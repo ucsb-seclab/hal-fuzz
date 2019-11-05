@@ -1,0 +1,23 @@
+architecture: arm
+base_address: 134217728
+entry_point: 134266325
+symbols: {134250421: _ZNK4mbed8CallbackIFviEE4callEi, 134265241: NVIC_SetVector, 134265385: HAL_InitTick,
+  134265605: _ZL11init_serialv.part.0, 134265621: _ZN4mbed10FileHandleD1Ev, 134265665: _open,
+  134265691: sub_4000e3, 134265713: sub_4000f9, 134265917: _close, 134265957: _write,
+  134266033: _read, 134266101: _isatty, 134266137: _lseek, 134266173: _fstat, 134266205: __cxa_pure_virtual,
+  134266237: _sbrk, 134266251: sub_40049b, 134266277: _exit, 134266409: HAL_Init,
+  134266453: HAL_IncTick, 134266469: HAL_GetTick, 134266481: HAL_NVIC_SetPriorityGrouping,
+  134267005: HAL_PWR_EnableBkUpAccess, 134267033: HAL_RCC_OscConfig, 134268705: HAL_RCC_ClockConfig,
+  134269309: HAL_RCC_GetSysClockFreq, 134269461: HAL_RCC_GetHCLKFreq, 134269513: HAL_RCC_GetPCLK1Freq,
+  134269557: HAL_RCC_GetPCLK2Freq, 134269605: HAL_RTC_GetDate, 134269693: RTC_EnterInitMode,
+  134269745: HAL_RTC_Init, 134269885: HAL_RTC_SetTime, 134270193: HAL_RTC_SetDate,
+  134270273: sub_4003ed, 134270449: RTC_Bcd2ToByte, 134270469: HAL_RTC_GetTime, 134270537: HAL_RTC_WaitForSynchro,
+  134270593: TIM_Base_SetConfig, 134270697: HAL_TIM_OC_Init, 134270745: HAL_TIM_OC_Start,
+  134270781: UART_SetConfig, 134271253: SystemCoreClockUpdate, 134271393: SetSysClock_PLL_HSE,
+  134271501: sub_4000f9, 134271553: SetSysClock_PLL_HSI, 134271661: sub_400199, 134271677: SetSysClock,
+  134271689: sub_4001b5, 134271709: SystemInit, 134271897: serial_init, 134272237: serial_getc,
+  134272261: serial_putc, 134272285: _ZN4mbed8FilePathC1EPKc, 134272373: _ZN4mbed8FilePath10fileSystemEv,
+  134272405: _ZN4mbed8FilePath6isFileEv, 134272425: _ZN4mbed8FilePath4fileEv, 134272457: _ZN4mbed8FilePath6existsEv,
+  134272669: _ZN4mbed10SerialBase10_base_putcEi, 134272961: pin_function, 134273441: gpio_set,
+  134273737: mbed_assert_internal, 134274845: __errno, 134275497: fflush, 134285217: sscanf,
+  134285439: strcmp}

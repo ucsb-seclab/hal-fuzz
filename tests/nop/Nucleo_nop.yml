@@ -1,0 +1,13 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+
+use_nvic: False
+use_timers: False
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./Nucleo_blink_led.bin,
+    permissions: r-x, size: 0x800000}
+  flash: {base_addr: 0x8000000, file: ./Nucleo_blink_led.bin,
+    permissions: r-x, size: 0x200000}
+
+entry_point: 0x8000E29

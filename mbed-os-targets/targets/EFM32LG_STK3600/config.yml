@@ -1,0 +1,24 @@
+architecture: arm
+entry_point: 0x1de5
+exit_at:
+  _exit: 0x1349
+  error: 0x26f9
+  mbed_assert_internal: 0x2571
+  mbed_die: 0x10c5
+  mbed_error: 0x273d
+include:
+- ./../../../configs/hw/cortexm_memory.yml
+- ./mmio_model_config_EFM32LG_STK3600.yml
+initial_sp: 0x20008000
+memory_map:
+  mmio_information:
+    base_addr: 0xfe00000
+    permissions: rw-
+    size: 0x9000
+  text:
+    base_addr: 0x0
+    file: ./basic_exercises.bin
+    permissions: r-x
+    size: 0x800000
+use_nvic: false
+use_timers: false

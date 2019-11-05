@@ -1,0 +1,12 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/mcuxpresso.yml
+  - ./uart_polling-addrs.yml
+
+memory_map:
+  flash: {base_addr: 0x0, file: ./uart_polling.bin,
+    permissions: r-x, size: 0x800000}
+
+use_nvic: False
+use_timers: False
+

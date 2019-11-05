@@ -1,0 +1,21 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/mbed.yml
+  - ./rf_door_lock_addrs.yml
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./rf_door_lock.bin,
+    permissions: r-x, size: 0x800000}
+  flash: {base_addr: 0x8000000, file: rf_door_lock.bin,
+    permissions: r-x, size: 0x200000}
+
+use_nvic: False
+use_timers: False
+
+handlers:
+  serial_getc:
+    handler: hal_fuzz.handlers.fuzz.return_fuzz_byte
+  _ZN4mbed6Stream4getcEv:
+    handler: hal_fuzz.handlers.fuzz.return_fuzz_byte
+  mbed_sdk_init:
+    handler:

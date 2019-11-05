@@ -1,0 +1,1 @@
+include hal_fuzz/native/native_hooks.so

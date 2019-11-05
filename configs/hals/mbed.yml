@@ -1,0 +1,63 @@
+handlers:
+  SystemInit:
+    handler:
+  mbed_copy_nvic:
+    handler:
+  mbed_sdk_init:
+    handler:
+  wait:
+    handler:
+
+
+  serial_readable:
+    handler: hal_fuzz.handlers.mbed.serial_readable
+  serial_writable:
+    handler: hal_fuzz.handlers.mbed.serial_writable
+  serial_getc:
+    handler: hal_fuzz.handlers.mbed.serial_getc
+  serial_putc:
+    handler: hal_fuzz.handlers.mbed.serial_putc
+  serial_puts:
+    handler: hal_fuzz.handlers.mbed.serial_puts
+  _ZN4mbed6Stream4getcEv:
+    handler: hal_fuzz.handlers.mbed.serial_getc
+  _ZN4mbed6Stream4putsEPKc:
+    handler: hal_fuzz.handlers.mbed.serial_puts
+  _ZN4mbed6Stream4putcEi:
+    handler: hal_fuzz.handlers.mbed.serial_putc
+
+  time:
+    handler: hal_fuzz.handlers.mbed.mbed_time
+  set_time:
+    handler: hal_fuzz.handlers.mbed.mbed_set_time
+  rtc_init:
+    handler:
+  rtc_read:
+    handler: hal_fuzz.handlers.mbed.mbed_time
+  rtc_write:
+    handler: hal_fuzz.handlers.mbed.mbed_set_time
+
+
+  SetSysClock:
+    handler:
+  SetSysClock_PLL_HSE:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_RCC_OscConfig:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_InitTick:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_RTC_Init:
+    handler: hal_fuzz.handlers.generic.return_zero
+
+  HAL_RTC_Write:
+    handler:
+  HAL_RTC_SetTime:
+    handler:
+  HAL_RTC_GetDate:
+    handler: hal_fuzz.handlers.mbed.hal_rtc_getdate
+  HAL_RTC_GetTime:
+    handler: hal_fuzz.handlers.mbed.hal_rtc_gettime
+  HAL_RTC_SetTime:
+    handler:
+  HAL_RTC_SetDate:
+    handler:

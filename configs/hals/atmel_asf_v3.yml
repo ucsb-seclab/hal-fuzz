@@ -1,0 +1,98 @@
+
+# --------------------------Debug --------------------------------------------
+#- class: halucinator.bp_handlers.generic.debug.IPythonShell
+#  function: HardFault_Handler
+#- class: halucinator.bp_handlers.generic.debug.IPythonShell
+#  function: Dummy_Handler
+#- class: halucinator.bp_handlers.generic.debug.IPythonShell
+##  function: SYSCTRL_Handler
+# - class: halucinator.bp_handlers.generic.debug.IPythonShell
+#   function: EIC_Handler
+
+# - class: halucinator.bp_handlers.generic.debug.IPythonShell
+#   addr: 0x7b4c
+#   function: "Need to Debug"
+
+handlers:
+
+# -----------------------    Startup ------------------------------------------
+
+  system_clock_init:
+    handler:
+  system_clock_source_xosc32k_set_config:
+    handler:
+
+# ----------------------- Timer ------------------------------------------
+
+  sys_get_ms:
+    handler: hal_fuzz.handlers.generic.timer.get_ms
+    #registration_args: { scale: 1 }
+# TODO
+#- class: halucinator.bp_handlers.atmel_asf_v3.ext_interrupt.EXT_Int
+#  registration_args: { channel_map: {6: Ethernet_RX_Frame }}
+#  function: extint_register_callback
+# -----------------------------------------------------------------------------
+
+# ----------------------- USART -----------------------------------------------
+  usart_init:
+    handler:
+  usart_enable:
+    handler:
+  usart_write_buffer_wait:
+    handler: hal_fuzz.handlers.atmel_asf_v3.usart_write_buffer_wait
+  usart_read_buffer_wait:
+    handler:
+  usart_write_wait:
+    handler: hal_fuzz.handlers.atmel_asf_v3.usart_write_wait
+  usart_read_wait:
+    handler:
+  puts:
+    handler: hal_fuzz.handlers.generic.stdio.puts
+  printf:
+    handler: hal_fuzz.handlers.generic.stdio.printf
+
+# ----------------------------------------------------------------------------
+# --------------------------ETHERNET -----------------------------------------
+  ethernetif_input:
+    handler: hal_fuzz.handlers.atmel_asf_v3.ethernetif_input
+  ksz8851snl_low_level_output:
+    handler: hal_fuzz.handlers.atmel_asf_v3.ksz8851snl_low_level_output
+  ksz8851snl_init:
+    handler:
+
+
+  rf_get_channel:
+    handler: hal_fuzz.handlers.generic.return_zero
+  rf_set_channel:
+    handler: hal_fuzz.handlers.generic.return_zero
+  SetIEEEAddr:
+    handler: hal_fuzz.handlers.rf233.SetIEEEAddr
+  rf233_send:
+    handler: hal_fuzz.handlers.rf233.rf233_send
+  rf233_on:
+    handler: hal_fuzz.handlers.rf233.rf233_on
+  rf233_off:
+    handler: hal_fuzz.handlers.rf233.rf233_off
+  rf233_sleep:
+    handler: hal_fuzz.handlers.generic.return_zero
+
+  trx_frame_read:
+    handler: hal_fuzz.handlers.rf233.trx_frame_read
+  trx_frame_write:
+    handler: hal_fuzz.handlers.rf233.rf233_send
+  trx_reg_read:
+    handler: hal_fuzz.handlers.rf233.trx_reg_read
+  trx_reg_write:
+    handler: hal_fuzz.handlers.rf233.trx_reg_write
+  trx_sram_read:
+    handler: hal_fuzz.handlers.rf233.trx_sram_read
+
+  i2c_master_init:
+    handler: hal_fuzz.handlers.generic.return_zero
+  i2c_master_write_packet_wait_no_stop:
+    handler: hal_fuzz.handlers.generic.return_zero
+  i2c_master_read_packet_wait:
+    handler: hal_fuzz.handlers.generic.return_zero
+  i2c_master_reset:
+    handler: hal_fuzz.handlers.generic.return_zero
+

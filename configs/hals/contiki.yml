@@ -1,0 +1,5 @@
+handlers:
+  clock_time:
+    handler: hal_fuzz.handlers.contiki.clock_time
+  clock_seconds:
+    handler: hal_fuzz.handlers.contiki.clock_seconds

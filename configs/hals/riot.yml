@@ -1,0 +1,34 @@
+handlers:
+
+
+
+  puts:
+    handler: hal_fuzz.handlers.generic.stdio.puts
+  printf:
+    handler: hal_fuzz.handlers.generic.stdio.printf
+  readline:
+    handler: hal_fuzz.handlers.generic.stdio.readline
+  _readline:
+    handler: hal_fuzz.handlers.generic.stdio.readline
+  putchar:
+    handler: hal_fuzz.handlers.generic.stdio.putchar
+  _putchar:
+    handler: hal_fuzz.handlers.generic.stdio.putchar
+  fflush:
+    handler:
+
+  uart_init:
+    handler:
+
+  gpio_init:
+    handler:
+  gpio_set:
+    handler:
+  cpu_init:
+    handler:
+  thread_create:
+    handler: hal_fuzz.handlers.riot.thread_create
+  thread_measure_stack_free:
+    handler: hal_fuzz.handlers.riot.thread_measure_stack_free
+  cpu_switch_context_exit:
+    handler: hal_fuzz.handlers.riot.cpu_switch_context_exit

@@ -1,0 +1,6 @@
+architecture: arm
+base_address: 134217728
+entry_point: 134221300
+symbols: {
+  0x08000DF4: Reset_Handler
+}

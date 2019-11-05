@@ -1,0 +1,41 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/stm32f4_hal.yml
+  - ./st-plc_addrs.yml
+
+use_timers: True
+use_nvic: True
+
+nvic: {
+  enabled: True,
+  vtor: 0,
+  num_vecs: 128
+}
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./st-plc.bin,
+    permissions: r-x, size: 0x800000}
+  rom: {base_addr: 0x08000000, file: ./st-plc.bin,
+    permissions: r-x, size: 0x800000}
+
+handlers:
+  BSP_LED_On:
+    handler: hal_fuzz.handlers.generic.crash
+    do_return: False
+    addr: 0x08019178
+  HAL_UART_Transmit:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_uart.HAL_UART_Transmit
+    do_return: False
+
+#  WiFi_Decode:
+#    handler: hal_fuzz.handlers.misc.st-plc.WiFi_Decode
+#    do_return: False
+#    addr: 0x08013060
+#  WiFi_Decode_mset:
+#    handler: hal_fuzz.handlers.misc.st-plc.WiFi_Decode_mset
+#    do_return: False
+#    addr: 0x08013540
+#  write:
+#    handler: hal_fuzz.handlers.misc.st-plc.write
+#    do_return: False
+#    addr: 0x08012440

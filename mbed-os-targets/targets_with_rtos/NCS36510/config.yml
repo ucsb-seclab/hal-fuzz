@@ -1,0 +1,32 @@
+include:
+  - ./../../../configs/hw/cortexm_memory.yml
+
+architecture: arm
+entry_point: 0x661d
+initial_sp: 0x40000000
+
+use_nvic: False
+use_timers: False
+
+memory_map:
+  flash: {base_addr: 0x3000, file: ./basic_excercises.bin,
+    permissions: r-x, size: 0x50000}
+  main_ram: {base_addr: 0x3FFF4000, permissions: rwx, size: 0xc000}
+  fib_trim: {base_addr: 0x2000, permissions: rwx, size: 0x1000}
+  #magic_rom: {base_addr: 0x1000, permissions: r-x, size: 0x1000}
+
+mmio_models:
+  passthrough:
+    dma_address_mmio_1:
+      addr: 0x40014020
+    #dma_address_mmio_2:
+    #  addr: 0x4001b02c
+  
+  constant:
+    dma_config_address_1:
+      addr: 0x00001fa8
+      val:  0x90000000
+    
+    #dma_config_address_2:
+    #  addr: 0x00001fac
+    #  val:  0x90010000

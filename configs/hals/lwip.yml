@@ -1,0 +1,31 @@
+handlers:
+  pbuf_free:
+    handler: hal_fuzz.handlers.lwip.pbuf_free
+  tcp_new:
+    handler: hal_fuzz.handlers.lwip.tcp_new
+  tcp_bind:
+    handler: hal_fuzz.handlers.lwip.tcp_bind
+  tcp_listen:
+    handler: hal_fuzz.handlers.lwip.tcp_listen
+  tcp_accept:
+    handler: hal_fuzz.handlers.lwip.tcp_accept
+  tcp_setprio:
+    handler: hal_fuzz.handlers.lwip.tcp_setprio
+  tcp_arg:
+    handler: hal_fuzz.handlers.lwip.tcp_arg
+  tcp_recv:
+    handler: hal_fuzz.handlers.lwip.tcp_recv
+  tcp_err:
+    handler: hal_fuzz.handlers.lwip.tcp_err
+  tcp_poll:
+    handler: hal_fuzz.handlers.lwip.tcp_poll
+  tcp_recved:
+    handler: hal_fuzz.handlers.lwip.tcp_recved
+  tcp_listen_with_backlog:
+    handler: hal_fuzz.handlers.lwip.tcp_listen_with_backlog
+  tcp_write:
+    handler: hal_fuzz.handlers.lwip.tcp_write
+  tcp_close:
+    handler: hal_fuzz.handlers.lwip.tcp_close
+  lwip_init:
+    handler: 

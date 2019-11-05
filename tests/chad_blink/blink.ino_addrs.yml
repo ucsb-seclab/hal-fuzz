@@ -1,0 +1,6 @@
+architecture: ARMEL
+base_address: 0x80000
+entry_point: 0x80678
+symbols: {
+  0x80000: 'dummy'
+}

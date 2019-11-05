@@ -1,0 +1,14 @@
+--- unicorn-1.0.1/qemu/target-arm/translate.c	2019-08-29 21:50:27.185277500 +0200
++++ unicorn_1.0.1/qemu/target-arm/translate.c	2019-08-20 14:58:59.371648000 +0200
+@@ -4150,9 +4150,8 @@
+         //s->is_jmp = DISAS_WFI;
+         break;
+     case 2: /* wfe */
+-        // Tobias: We don't want the execution to halt upon a normal WFE instruction
+-        //gen_set_pc_im(s, s->pc);
+-        //s->is_jmp = DISAS_WFE;
++        gen_set_pc_im(s, s->pc);
++        s->is_jmp = DISAS_WFE;
+         break;
+     case 4: /* sev */
+     case 5: /* sevl */

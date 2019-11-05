@@ -1,0 +1,15 @@
+diff -ruN unicorn-1.0.1/qemu/target-arm/translate.c unicorn_1.0.1/qemu/target-arm/translate.c
+--- unicorn-1.0.1/qemu/target-arm/translate.c	2019-08-20 15:00:41.177859100 +0200
++++ unicorn_1.0.1/qemu/target-arm/translate.c	2019-08-20 14:58:59.371648000 +0200
+@@ -4145,8 +4145,9 @@
+ {
+     switch (val) {
+     case 3: /* wfi */
+-        gen_set_pc_im(s, s->pc);
+-        s->is_jmp = DISAS_WFI;
++        // Tobias: We don't want the execution to halt upon a normal WFI instruction
++        //gen_set_pc_im(s, s->pc);
++        //s->is_jmp = DISAS_WFI;
+         break;
+     case 2: /* wfe */
+         gen_set_pc_im(s, s->pc);

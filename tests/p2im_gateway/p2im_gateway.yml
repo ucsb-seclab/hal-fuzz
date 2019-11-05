@@ -1,0 +1,21 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/stm32f4_hal.yml
+  - ./p2im_gateway_addrs.yml
+
+use_nvic: False
+use_timers: False
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./p2im_gateway.bin,
+    permissions: r-x, size: 0x800000}
+  rom: {base_addr: 0x08000000, file: ./p2im_gateway.bin,
+    permissions: r-x, size: 0x800000}
+
+use_timers: True
+use_nvic: True
+serial_irq: 0x35
+
+handlers:
+  _Error_Handler:
+    handler: hal_fuzz.handlers.generic.crash

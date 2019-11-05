@@ -1,0 +1,31 @@
+include:
+  - ./../../configs/hw/cortexm_memory.yml
+  - ./../../configs/hals/atmel_asf_v3.yml
+  - ./../../configs/hals/lwip.yml
+  - ./samr21_http_addrs.yml
+
+memory_map:
+  ivt: {base_addr: 0x0, file: ./samr21_http.bin,
+    permissions: r-x, size: 0x800000}
+
+use_nvic: False
+use_timers: False
+
+handlers:
+  system_init:
+    handler:
+  delay_init:
+    handler:
+  setup_usart_channel:
+    handler:
+  init_ethernet:
+    handler: 
+  puts:
+    handler: hal_fuzz.handlers.generic.stdio.puts
+  ethernet_task:
+    handler: hal_fuzz.handlers.lwip.tick
+  mem_malloc:
+    handler: hal_fuzz.handlers.generic.malloc.malloc
+  mem_free:
+    handler: hal_fuzz.handlers.generic.malloc.free
+

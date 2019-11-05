@@ -1,0 +1,48 @@
+architecture: ARMCortexM
+base_address: 0
+entry_point: 1221
+symbols:
+  1105: _start
+  1733: main
+  1829: BOARD_InitPins
+  1893: BOARD_BootClockRUN
+  2001: UART_GetInstance
+  2077: UART_Init
+  2341: UART_GetDefaultConfig
+  2383: UART_GetStatusFlags
+  2405: UART_WriteBlocking
+  2427: UART_ReadBlocking
+  2505: UART0_DriverIRQHandler
+  2537: UART0_RX_TX_DriverIRQHandler
+  2549: UART1_DriverIRQHandler
+  2581: UART1_RX_TX_DriverIRQHandler
+  2593: UART2_DriverIRQHandler
+  2625: UART2_RX_TX_DriverIRQHandler
+  2637: UART3_DriverIRQHandler
+  2669: UART3_RX_TX_DriverIRQHandler
+  2681: UART4_DriverIRQHandler
+  2713: UART4_RX_TX_DriverIRQHandler
+  2725: UART5_DriverIRQHandler
+  2757: UART5_RX_TX_DriverIRQHandler
+  2929: CLOCK_GetOsc0ErClkFreq
+  2953: CLOCK_GetEr32kClkFreq
+  3013: CLOCK_SetSimConfig
+  3073: CLOCK_GetFllFreq
+  3153: CLOCK_GetInternalRefClkFreq
+  3173: CLOCK_GetPll0Freq
+  3217: CLOCK_GetPllFllSelClkFreq
+  3261: CLOCK_GetOutClkFreq
+  3301: CLOCK_GetFixedFreqClkFreq
+  3353: CLOCK_GetFreq
+  3537: CLOCK_SetExternalRefClkConfig
+  3589: CLOCK_SetInternalRefClkConfig
+  3717: CLOCK_EnablePll0
+  3769: CLOCK_InitOsc0
+  3869: CLOCK_SetPbeMode
+  3949: CLOCK_BootToPeeMode
+  4001: SystemInit
+  4033: exit
+  4073: __libc_init_array
+  4145: memset
+  4237: _init
+  4249: _fini

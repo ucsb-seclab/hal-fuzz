@@ -1,0 +1,129 @@
+mmio_models:
+  constant:
+    pc_00000ea0_mmio_4000c014:
+      addr: 0x4000c014
+      pc: 0xea0
+      val: 0x1
+    pc_00001220_mmio_400fc1a0:
+      addr: 0x400fc1a0
+      pc: 0x1220
+      val: 0x40
+    pc_00001260_mmio_400fc088:
+      addr: 0x400fc088
+      pc: 0x1260
+      val: 0x4000000
+    pc_0000127a_mmio_400fc088:
+      addr: 0x400fc088
+      pc: 0x127a
+      val: 0x1000000
+  passthrough:
+    pc_00000a18_mmio_4002c000:
+      addr: 0x4002c000
+      init_val: 0x0
+      pc: 0xa18
+    pc_00000a18_mmio_4002c00c:
+      addr: 0x4002c00c
+      init_val: 0x0
+      pc: 0xa18
+    pc_00000a26_mmio_4002c000:
+      addr: 0x4002c000
+      init_val: 0x0
+      pc: 0xa26
+    pc_00000a26_mmio_4002c00c:
+      addr: 0x4002c00c
+      init_val: 0x0
+      pc: 0xa26
+    pc_00000a60_mmio_4002c068:
+      addr: 0x4002c068
+      init_val: 0x0
+      pc: 0xa60
+    pc_00000a60_mmio_4002c06c:
+      addr: 0x4002c06c
+      init_val: 0x0
+      pc: 0xa60
+    pc_00000a74_mmio_4002c068:
+      addr: 0x4002c068
+      init_val: 0x0
+      pc: 0xa74
+    pc_00000a74_mmio_4002c06c:
+      addr: 0x4002c06c
+      init_val: 0x0
+      pc: 0xa74
+    pc_00000a8c_mmio_4002c040:
+      addr: 0x4002c040
+      init_val: 0x0
+      pc: 0xa8c
+    pc_00000a8c_mmio_4002c04c:
+      addr: 0x4002c04c
+      init_val: 0x0
+      pc: 0xa8c
+    pc_00000a9a_mmio_4002c040:
+      addr: 0x4002c040
+      init_val: 0x0
+      pc: 0xa9a
+    pc_00000a9a_mmio_4002c04c:
+      addr: 0x4002c04c
+      init_val: 0x0
+      pc: 0xa9a
+    pc_00000b30_mmio_4000c004:
+      addr: 0x4000c004
+      init_val: 0x0
+      pc: 0xb30
+    pc_00000d2a_mmio_4000c00c:
+      addr: 0x4000c00c
+      init_val: 0x0
+      pc: 0xd2a
+    pc_00000d40_mmio_4000c00c:
+      addr: 0x4000c00c
+      init_val: 0x0
+      pc: 0xd40
+    pc_00000d76_mmio_400fc1a8:
+      addr: 0x400fc1a8
+      init_val: 0x0
+      pc: 0xd76
+    pc_00000d82_mmio_400fc1a8:
+      addr: 0x400fc1a8
+      init_val: 0x0
+      pc: 0xd82
+    pc_00001156_mmio_400fc0c4:
+      addr: 0x400fc0c4
+      init_val: 0x0
+      pc: 0x1156
+    pc_00001296_mmio_400fc000:
+      addr: 0x400fc000
+      init_val: 0x0
+      pc: 0x1296
+    pc_000012cc_mmio_40094014:
+      addr: 0x40094014
+      init_val: 0x0
+      pc: 0x12cc
+    pc_0000130c_mmio_400fc0c4:
+      addr: 0x400fc0c4
+      init_val: 0x0
+      pc: 0x130c
+  set:
+    pc_00000b3a_mmio_4000c004:
+      addr: 0x4000c004
+      pc: 0xb3a
+      vals:
+      - 0x0
+      - 0x2
+    pc_00000f02_mmio_4000c014:
+      addr: 0x4000c014
+      pc: 0xf02
+      vals:
+      - 0x0
+      - 0x20
+    pc_00001218_mmio_400fc1a0:
+      addr: 0x400fc1a0
+      pc: 0x1218
+      vals:
+      - 0x0
+      - 0x20
+  unmodeled:
+    pc_00000eac_mmio_4000c000:
+      addr: 0x4000c000
+      pc: 0xeac
+    pc_000012be_mmio_40094008:
+      addr: 0x40094008
+      pc: 0x12be

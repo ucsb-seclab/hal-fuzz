@@ -1,0 +1,96 @@
+
+
+handlers:
+  HAL_Init:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_InitTick:
+    handler: hal_fuzz.handlers.generic.return_zero
+  SystemClock_Config:
+    handler: hal_fuzz.handlers.generic.return_zero
+  SystemInit:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_RCC_ClockConfig:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_RCC_OscConfig:
+    handler: hal_fuzz.handlers.generic.return_zero
+
+  HAL_PWREx_EnableOverDrive:
+    handler: hal_fuzz.handlers.generic.return_zero
+
+  HAL_SYSTICK_Config:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_base.systick_config
+  HAL_SYSTICK_CLKSourceConfig:
+    handler:
+  HAL_TIM_ConfigClockSource:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_TIMEx_MasterConfigSynchronization:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_TIM_Base_Start_IT:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_tim.tim_base_start_it
+  HAL_TIM_Base_Stop_IT:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_tim.tim_base_stop_it
+  HAL_TIM_IRQHandler:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_tim.tim_irq_handler
+  HAL_Delay:
+    handler:
+  delay_ms:
+    handler:
+  HAL_TIM_PWM_Init:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_TIMEx_MasterConfigSynchronization:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_TIM_PWM_ConfigChannel:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_TIM_PWM_Start:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_TIMEx_ConfigBreakDeadTime:
+    handler: hal_fuzz.handlers.generic.return_zero
+
+
+
+  HAL_ETH_Init:
+    handler: hal_fuzz.handlers.generic.return_zero
+
+  wifi_init:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_wifi.wifi_init
+  wifi_wakeup:
+    handler:
+  Wifi_SysTick_Isr:
+    handler:
+  Wifi_TIM_Handler:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_wifi.wifi_tim_handler
+  wifi_socket_server_open:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_wifi.wifi_socket_server_open
+  wifi_socket_server_write:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_wifi.wifi_socket_server_write
+  wifi_ap_start:
+    handler:
+  Receive_Data:
+    handler:
+
+  UART_WaitOnFlagUntilTimeout:
+     handler: hal_fuzz.handlers.generic.return_zero
+
+  HAL_I2C_Init:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_I2C_Mem_Read:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_i2c.HAL_I2C_Mem_Read
+  HAL_I2C_Mem_Write:
+    handler: hal_fuzz.handlers.generic.return_zero
+
+  HAL_GPIO_Init:
+    handler:
+  HAL_GPIO_WritePin:
+    handler:
+
+  HAL_UART_Init:
+    handler: hal_fuzz.handlers.generic.return_zero
+  HAL_UART_Receive_IT:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_uart.HAL_UART_Receive_IT
+  HAL_UART_Transmit:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_uart.HAL_UART_Transmit
+  HAL_UART_IRQHandler:
+    handler: hal_fuzz.handlers.stm32f4_hal.stm32f4_uart.HAL_UART_IRQHandler
+
+  HAL_ADCEx_Calibration_Start:
+    handler:
