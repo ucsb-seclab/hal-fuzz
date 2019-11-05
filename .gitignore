@@ -1,0 +1,5 @@
+*.pyc
+*.egg-info
+*.o
+*.idea
+./unicorn_mode/unicorn-1.0.1
