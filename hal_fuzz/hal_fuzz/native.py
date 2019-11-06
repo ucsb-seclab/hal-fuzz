@@ -5,8 +5,6 @@ import os
 import sys
 from os import path
 from .exit import do_exit
-from .mmio_models.wrapper import mmio_access_handler_wrapper_hook
-from .tracing import new_mmio_region_added_callback
 from .models import timer
 
 native_lib = None
@@ -57,12 +55,6 @@ UC_HOOK_INTR_CB = ctypes.CFUNCTYPE(
     None, uc_engine, ctypes.c_uint32, ctypes.c_void_p
 )
 
-mmio_user_data = None
-def add_mmio_region(uc, start, end):
-    global mmio_user_data
-    if mmio_user_data is None:
-        mmio_user_data = ctypes.cast(uc._callback_count, ctypes.c_void_p)
-    assert(native_lib.add_mmio_region(uc._uch, start, end, mmio_user_data)==0)
 
 def add_unmapped_mem_hook(uc):
     assert(native_lib.add_unmapped_mem_hook(uc._uch)==0)
@@ -70,6 +62,8 @@ def add_unmapped_mem_hook(uc):
 def load_fuzz(file_path):
     print("Loading fuzz from: {}".format(file_path))
     assert(native_lib.load_fuzz(file_path.encode())==0)
+    print('lol')
+    sys.stdout.flush()
 
 def get_fuzz(size):
     ptr = (ctypes.c_char * size).from_address(native_lib.get_fuzz_ptr(size))
@@ -131,17 +125,6 @@ def _create_and_inject_c_callable_central_timer_hook(uc, py_fn):
     obj_refs.append(cb)
     return cb, user_data
 
-
-def register_py_handled_mmio_ranges(uc, python_handled_range_starts, python_handled_range_ends):
-    global mmio_cb_wrapper
-
-    assert(mmio_cb_wrapper is not None)
-    assert (len(python_handled_range_starts) == len(python_handled_range_ends))
-    
-    starts_arr = (ctypes.c_int64 * len(python_handled_range_starts))(*python_handled_range_starts)
-    ends_arr = (ctypes.c_int64 * len(python_handled_range_ends))(*python_handled_range_ends)
-
-    assert(native_lib.register_py_handled_mmio_ranges(uc._uch, mmio_cb_wrapper, starts_arr, ends_arr, len(python_handled_range_ends)) == 0)
 
 
 def register_linear_mmio_models(uc, starts, ends, pcs, init_vals, steps):
@@ -273,7 +256,8 @@ def add_interrupt_trigger(uc, addr, irq, num_skips, num_pends, do_fuzz):
 def init(uc, native_lib_path, fuzz_mmio, mmio_regions, max_num_dynamically_added_mmio_pages, exit_at_bbls, allowed_fuzzed_irqs):
     global native_lib
     global mmio_cb_wrapper
-
+    print("Native init...")
+    sys.stdout.flush()
     native_lib = _load_lib(native_lib_path)
     assert (native_lib is not None)
     # GENERAL
@@ -290,22 +274,8 @@ def init(uc, native_lib_path, fuzz_mmio, mmio_regions, max_num_dynamically_added
     _setup_prototype(native_lib, "fuzz_remaining", ctypes.c_int)
     # char *get_fuzz_ptr(uint32_t size);
     _setup_prototype(native_lib, "get_fuzz_ptr", ctypes.c_void_p, ctypes.c_uint32)
-    # uc_err add_mmio_region(uc_engine *uc, uint64_t begin, uint64_t end)
-    _setup_prototype(native_lib, "add_mmio_region", ctypes.c_int, uc_engine, ctypes.c_uint64, ctypes.c_uint64, ctypes.c_void_p)
     # uc_err add_unmapped_mem_hook(uc_engine *uc)
     _setup_prototype(native_lib, "add_unmapped_mem_hook", ctypes.c_int, uc_engine)
-    # extern uc_err register_py_handled_mmio_ranges(uc_engine *uc, uc_cb_hookmem_t py_callback, uint64_t *starts, uint64_t *ends, int num_ranges);
-    _setup_prototype(native_lib, "register_py_handled_mmio_ranges", ctypes.c_int, uc_engine, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int)
-    # extern uc_err set_ignored_mmio_addresses(uint64_t *addresses, uint32_t *pcs, int num_addresses);
-    _setup_prototype(native_lib, "set_ignored_mmio_addresses", ctypes.c_int, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int)
-    # extern uc_err register_linear_mmio_models(uc_engine *uc, uint64_t *starts, uint64_t *ends, uint32_t *pcs, uint32_t *init_vals, uint32_t *steps, int num_ranges);
-    _setup_prototype(native_lib, "register_linear_mmio_models", ctypes.c_int, uc_engine, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int)
-    # extern uc_err register_constant_mmio_models(uc_engine *uc, uint64_t *starts, uint64_t *ends, uint32_t *pcs, uint32_t *vals, int num_ranges)
-    _setup_prototype(native_lib, "register_constant_mmio_models", ctypes.c_int, uc_engine, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int)
-    # extern uc_err register_bitextract_mmio_models(uc_engine *uc, uint64_t *starts, uint64_t *ends, uint32_t *pcs, uint8_t *byte_sizes, uint8_t *left_shifts, uint32_t * masks, int num_ranges);
-    _setup_prototype(native_lib, "register_bitextract_mmio_models", ctypes.c_int, uc_engine, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int)
-    # extern uc_err register_value_set_mmio_models(uc_engine *uc, uint64_t *starts, uint64_t *ends, uint32_t *pcs, uint32_t *value_nums, uint32_t **value_lists, int num_ranges);
-    _setup_prototype(native_lib, "register_value_set_mmio_models", ctypes.c_int, uc_engine, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int)
 
     # NVIC
     # extern uc_err init_nvic(uc_engine *uc, uint32_t vtor, uint32_t num_vectors, uint32_t is_oneshot)
@@ -334,23 +304,4 @@ def init(uc, native_lib_path, fuzz_mmio, mmio_regions, max_num_dynamically_added
     # extern uc_err stop_timer(uint32_t id);
     _setup_prototype(native_lib, "stop_timer", ctypes.c_int, ctypes.c_uint32)
 
-    # INTERRUPT TRIGGERS
-    # uc_hook add_interrupt_trigger(uc_engine *uc, uint64_t addr, uint32_t irq, uint32_t num_skips, uint32_t num_pends, uint32_t do_fuzz);
-    _setup_prototype(native_lib, "add_interrupt_trigger", ctypes.c_int, uc_engine, ctypes.c_uint64, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32)
-
-    mmio_region_starts, mmio_region_ends = zip(*mmio_regions)
-    mmio_region_starts_arr = (ctypes.c_int64 * len(mmio_region_starts))(*mmio_region_starts)
-    mmio_region_ends_arr = (ctypes.c_int64 * len(mmio_region_ends))(*mmio_region_ends)
-
-    mmio_cb_wrapper, user_data = _create_and_inject_c_callable_mem_hook(uc, mmio_access_handler_wrapper_hook)
-    exit_cb = ctypes.cast(EXIT_CB(do_exit), EXIT_CB)
-    mmio_region_added_cb = ctypes.cast(MMIO_REGION_ADDED_CB(new_mmio_region_added_callback), MMIO_REGION_ADDED_CB)
-
-    num_allowed_fuzzed_irqs = len(allowed_fuzzed_irqs)
-    allowed_fuzzed_irqs_arr = (ctypes.c_int8 * len(allowed_fuzzed_irqs))(*allowed_fuzzed_irqs)
-
-    num_exit_at_bbls = len(exit_at_bbls)
-    exit_at_bbls_arr = (ctypes.c_int64 * len(exit_at_bbls))(*exit_at_bbls)
-    assert (native_lib.init(uc._uch, 1 if fuzz_mmio else 0, exit_cb, mmio_region_added_cb, len(mmio_regions), mmio_region_starts_arr, mmio_region_ends_arr, user_data, max_num_dynamically_added_mmio_pages, num_exit_at_bbls, exit_at_bbls_arr, num_allowed_fuzzed_irqs, allowed_fuzzed_irqs_arr) == 0)
-    obj_refs.append(exit_cb)
-    obj_refs.append(mmio_region_added_cb)
+    assert (native_lib.init(uc._uch, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) == 0)

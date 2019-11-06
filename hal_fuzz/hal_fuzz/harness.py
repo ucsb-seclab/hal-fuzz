@@ -2,6 +2,7 @@ import argparse
 import os
 import signal
 import collections
+import archinfo
 import sys
 import yaml
 import gc
@@ -13,12 +14,13 @@ from .tracing import trace_bbs, trace_mem, snapshot, trace_ids
 from .exit import do_exit
 from . import native
 from . import handlers
-
+from .sparkle import add_sparkles
 from .util import bytes2int
 from unicorn import *
 from unicorn.arm_const import *
 from .handlers import func_hook_handler, add_func_hook, add_block_hook, register_global_block_hook, register_func_handler_hook
 from .handlers import fuzz
+import struct
 
 #########
 # Debugging stuff
@@ -40,10 +42,7 @@ try:
         for (cs_address, cs_size, cs_mnemonic, cs_opstr) in cs.disasm_lite(bytes(mem), size):
             print("    Instr: {:#016x}:\t{}\t{}".format(curpc, cs_mnemonic, cs_opstr))
 except ImportError:
-    def debug_step(self):
-        print("non-implemented debug_step called! :-(")
-        exit(-1)
-        
+
     def unicorn_debug_instruction(uc, address, size, user_data):
         print("    Instr: addr= 0x{0:016x} , size=0x{1:016x}".format(address, size))    
 
@@ -62,8 +61,6 @@ def unicorn_debug_block(uc, address, size, user_data):
         print("Junk: %s", junk)
         import ipdb; ipdb.set_trace()
     """
-    if address == 0x768:
-        import ipdb; ipdb.set_trace()
 
 def unicorn_trace_syms(uc, address, size, user_data):
     if address in uc.syms_by_addr:
@@ -78,13 +75,16 @@ def unicorn_debug_mem_access(uc, access, address, size, value, user_data):
         if access == UC_MEM_WRITE:
             print("        >>> Write: addr= 0x{0:08x}[SP:{3:+04x}] size={1} data=0x{2:08x}".format(address, size, value, address - sp))
         else:
-            print("        >>> Read: addr= 0x{0:08x}[SP:{3:+04x}] size={1} data=0x{2:08x}".format(address, size, value, address - sp))
+            value = uc.mem_read(address, size)
+            print("        >>> Read: addr= 0x{0:08x}[SP:{3:+04x}] size={1} data=0x{2:s}".format(address, size, value.hex(), address - sp))
     else:
         if access == UC_MEM_WRITE:
             print("        >>> Write: addr= 0x{0:016x} size={1} data=0x{2:016x}".format(address, size, value))
         else:
-            print("        >>> Read: addr= 0x{0:016x} size={1} data=0x{2:016x}".format(address, size, value))
+            value = uc.mem_read(address, size)
+            print("        >>> Read: addr= 0x{0:016x} size={1} data=0x{2:s}".format(address, size, value.hex()))
     sys.stdout.flush()
+
 
 def unicorn_debug_mem_invalid_access(uc, access, address, size, value, user_data):
     if access == UC_MEM_WRITE_UNMAPPED:
@@ -170,7 +170,7 @@ def configure_unicorn(args):
         print("Mapping region %s at %#08x, size %#08x, perms: %d" % (rname, region['base_addr'], region['size'], prot))
         regions[rname] = (region['base_addr'], region['size'], prot)
         uc.mem_map(region['base_addr'], region['size'], prot)
-        if 'file' in region and args.restore_state_file_name is None:
+        if 'file' in region:
             file_offset = 0
             load_offset = 0
             file_size = region['size']
@@ -191,68 +191,11 @@ def configure_unicorn(args):
                 uc.mem_write(region['base_addr'] + load_offset, region_data)
     globs.regions = regions
 
-    if args.restore_state_file_name is not None:
-        snapshot.restore_snapshot(uc, args.restore_state_file_name)
-
-    mmio_ranges = [(start, start + size) for rname, (start, size, prot) in regions.items() if rname.lower().startswith('mmio')]
-
-    allowed_irqs = []
-    if 'use_fuzzed_irqs' in config and config['use_fuzzed_irqs'] is True and 'fuzzed_irqs' in config:
-        allowed_irqs = fuzz.parse_fuzzed_irqs(config['fuzzed_irqs'])
-
-    if args.exit_at_bbl != globs.EXIT_AT_NONE:
-        exit_at_bbls = [args.exit_at_bbl]
-    elif 'use_exit_at' in config and config['use_exit_at'] is True and 'exit_at' in config:
-        exit_at_bbls = list(config['exit_at'].values())
-    else:
-        exit_at_bbls = []
-
     # Native mmio fuzzing
     if not os.path.exists(args.native_lib):
         print("Native library %s does not exist!" % args.native_lib)
         exit(1)
-    native.init(uc, args.native_lib, args.fuzz_mmio, mmio_ranges, args.max_num_dynamically_added_mmio_pages, exit_at_bbls, allowed_irqs)
-
-    if args.fuzz_mmio:
-        if 'mmio_models' in config:
-            if 'constant' in config['mmio_models']:
-                # TODO: constant values could also be thought of fallthroughs for read-only registers
-                from .mmio_models.constant import register_constant_mmio_models, parse_constant_handlers
-                register_constant_mmio_models(uc, *parse_constant_handlers(config['mmio_models']['constant']))
-
-            if 'passthrough' in config['mmio_models']:
-                from .mmio_models.passthrough import register_passthrough_handlers
-                register_passthrough_handlers(uc, config['mmio_models']['passthrough'])
-
-            if 'linear' in config['mmio_models']:
-                from .mmio_models.linear import parse_linear_handlers, register_linear_mmio_models
-                register_linear_mmio_models(uc, *parse_linear_handlers(config['mmio_models']['linear']))
-
-            if 'bitextract' in config['mmio_models']:
-                from .mmio_models.bitextract import parse_bitextract_handlers, register_bitextract_mmio_models
-                register_bitextract_mmio_models(uc, *parse_bitextract_handlers(config['mmio_models']['bitextract']))
-
-            if 'set' in config['mmio_models']:
-                from .mmio_models.set import parse_value_set_handlers, register_value_set_mmio_models
-                register_value_set_mmio_models(uc, *parse_value_set_handlers(config['mmio_models']['set']))
-
-            if 'custom' in config['mmio_models']:
-                from .mmio_models.wrapper import register_custom_handlers
-                register_custom_handlers(config['mmio_models']['custom'])
-
-        starts = []
-        ends = []
-        from .mmio_models.wrapper import get_entries
-        for start, end, _ in get_entries():
-            if all([start < mmio_start or end > mmio_end for mmio_start, mmio_end in mmio_ranges]):
-                mmio_ranges.append((start, end))
-            starts.append(start)
-            ends.append(end)
-
-        if args.max_num_dynamically_added_mmio_pages != 0:
-            native.add_unmapped_mem_hook(uc)
-        if starts:
-            native.register_py_handled_mmio_ranges(uc, starts, ends)
+    native.init(uc, args.native_lib, False, [], 0, None, [])
 
     name_to_addr = {}
     addr_to_name = {}
@@ -289,9 +232,6 @@ def configure_unicorn(args):
             print("Handling function %s at %#08x with %s" % (fname, handler_desc['addr'], handler_desc['handler']))
             add_func_hook(uc, handler_desc['addr'], handler_desc['handler'], do_return=handler_desc['do_return'])
 
-    trace_ids.set_trace_id_limit(args.trace_event_limit)
-    if args.mmio_trace_file is not None:
-        trace_mem.init_mmio_tracing(uc, args.mmio_trace_file, mmio_ranges)
 
     if args.ram_trace_file is not None:
         trace_mem.init_ram_tracing(uc, args.ram_trace_file, config)
@@ -299,47 +239,39 @@ def configure_unicorn(args):
     if args.bb_trace_file is not None:
         trace_bbs.register_handler(uc, args.bb_trace_file)
 
-    if args.debug:
+    if args.debug and args.trace_memory:
         add_block_hook(unicorn_debug_block)
         uc.hook_add(UC_HOOK_MEM_WRITE | UC_HOOK_MEM_READ, unicorn_debug_mem_access)
-        # TODO: Put an MMIO abstraction leak detector here
-    if args.trace_funcs:
+
+    if args.debug and args.trace_funcs:
         add_block_hook(unicorn_trace_syms)
 
     # This is our super nasty crash detector
-    # TODO: Is this enough?
     uc.hook_add(UC_HOOK_MEM_WRITE_UNMAPPED | UC_HOOK_MEM_READ_INVALID, unicorn_debug_mem_invalid_access)
 
-    if args.dump_state_filename is not None:
-        snapshot.init_state_snapshotting(uc, args.dump_state_filename, args.dump_mmio_states, mmio_ranges, args.dumped_mmio_contexts, args.dumped_mmio_name_prefix)
+    # Set the program entry point
+    # TODO: Make this arch-independent
+    if not 'entry_point' in config:
+        print("Binary entry point missing! Make sure 'entry_point is in your configuration")
+        sys.exit(1)
+    # Set the initial stack pointer
+    # TODO: make this arch-independent
+    uc.reg_write(UC_ARM_REG_PC, config['entry_point'])
+    uc.reg_write(UC_ARM_REG_SP, config['initial_sp'])
 
-    if args.restore_state_file_name is None:
-        # Set the program entry point
-        # TODO: Make this arch-independent
-        if not 'entry_point' in config:
-            print("Binary entry point missing! Make sure 'entry_point is in your configuration")
-            sys.exit(1)
-        # Set the initial stack pointer
-        # TODO: make this arch-independent
-        uc.reg_write(UC_ARM_REG_PC, config['entry_point'])
-        uc.reg_write(UC_ARM_REG_SP, config['initial_sp'])
 
     # Implementation detail: Interrupt triggers need to be configured before the nvic (to enable multiple interrupt enabling)
     if 'interrupt_triggers' in config:
         interrupt_triggers.init_triggers(uc, config['interrupt_triggers'])
 
-    # Configure nvic. We need to be a bit verbose here as we need to auto-enable the nvic for isr fuzzing
-    has_initial_interrupt = args.initial_interrupt != -1
     use_nvic = ('use_nvic' in config and config['use_nvic'] is True) or (has_initial_interrupt and args.restore_state_file_name is not None)
     if use_nvic:
         vtor = globs.NVIC_VTOR_NONE
         num_vecs = globs.DEFAULT_NUM_NVIC_VECS
         if 'nvic' in config:
-            if args.restore_state_file_name is None:
-                vtor = config['nvic']['vtor'] if 'vtor' in config['nvic'] else config['nvic']['addr']
             num_vecs = config['nvic']['num_vecs'] if 'num_vecs' in config['nvic'] else globs.DEFAULT_NUM_NVIC_VECS
 
-        native.init_nvic(uc, vtor, num_vecs, not args.resume_after_isr_return)
+        native.init_nvic(uc, vtor, num_vecs, False)
 
     # Configure abstract peripheral models
     configure_models(uc, config)
@@ -355,7 +287,7 @@ def configure_unicorn(args):
 
     uc.symbols = name_to_addr
     uc.syms_by_addr = addr_to_name
-    uc.debug_step = debug_step
+    uc = add_sparkles(uc, args)
     return uc
 
 def auto_int(x):
@@ -365,26 +297,18 @@ def main():
     parser = argparse.ArgumentParser(description="HALFuzz execution harness")
     parser.add_argument('input_file', type=str, help="Path to the file containing the mutated input to load")
     parser.add_argument('-s', '--single', default=False, action='store_true')
-    parser.add_argument('-d', '--debug', default=False, action="store_true", help="Enables debug tracing")
+    parser.add_argument('-d', '--debug', default=False, action="store_true", help="Enables debug mode (required for -t and -M) (SLOW!)")
     parser.add_argument('-c', '--config')
+    parser.add_argument('-M', '--trace-memory', default=False, action="store_true", dest='trace_memory',
+                        help="Enables memory tracing")
     parser.add_argument('-t', '--trace-funcs', dest='trace_funcs', default=False, action='store_true')
     parser.add_argument('-l', '--instr-limit', dest='instr_limit', type=int, default=globs.DEFAULT_BASIC_BLOCK_LIMIT, help="Maximum number of instructions to execute. 0: no limit. Default: {:d}".format(globs.DEFAULT_BASIC_BLOCK_LIMIT))
-    parser.add_argument('-m', '--fuzz-mmio', dest='fuzz_mmio', default=False, action='store_true')
     parser.add_argument('-n', '--use-native', dest='use_native', default=True, action='store_true')
+    parser.add_argument("-b", '--breakpoint', dest='breakpoint', type=int)
     parser.add_argument('--native-lib', dest='native_lib', default=os.path.dirname(os.path.realpath(__file__))+'/native/native_hooks.so', help="Specify the path of the native library")
     parser.add_argument('--mmio-trace-out', dest='mmio_trace_file', default=None)#, type=argparse.FileType("w"))
     parser.add_argument('--ram-trace-out', dest='ram_trace_file', default=None)#, type=argparse.FileType("w"))
     parser.add_argument('--bb-trace-out', dest='bb_trace_file', default=None)#, type=argparse.FileType("w"))
-    parser.add_argument('--trace-event-limit', dest='trace_event_limit', default=0, type=int, help="Exit before the (n+1)th event id would be used")
-    parser.add_argument('--exit-at', dest='exit_at_bbl', default=globs.EXIT_AT_NONE, type=auto_int, help="Exit at the given basic block address.")
-    parser.add_argument('--state-out', dest='dump_state_filename', default=None, help="Destination of output state(s). If all MMIO accesses are to be dumped, pass a directory here.")
-    parser.add_argument('--dump-mmio-states', dest='dump_mmio_states', default=False, action='store_true', help="Dump states at every unique MMIO access.")
-    parser.add_argument('--dumped-mmio-contexts', default='', help="Restrict the (pc, mmio_address) contexts for which to dump states for. Format: pc1:mmio1,pc2:mmio2,...,pcX:mmioX")
-    parser.add_argument('--dumped-mmio-name-prefix', default='', help="Add a prefix to each generated MMIO state name for distinguishability")
-    parser.add_argument('-r', '--restore-state', dest='restore_state_file_name', default=None)#, type=argparse.FileType("r"))
-    parser.add_argument('-i', '--initial-interrupt', dest='initial_interrupt', type=int, default=-1)
-    parser.add_argument('--resume-after-isr-return', default=True, action="store_true", help="Specify, if execution should be resumed after initial isr return.")
-    parser.add_argument('--max-dynamic-mmio-pages', dest='max_num_dynamically_added_mmio_pages', type=int, default=globs.DEFAULT_MAX_NUM_DYN_ALLOC_MMIO_PAGES, help="The maximum number of pages to add dynamically upon seeing an unmapped memory access. This is useful to make up for initially missing mmio config entries. Should be set to 0 as soon as modelling is done and crashes are sought.")
 
 
     args = parser.parse_args()
@@ -403,17 +327,6 @@ def main():
     uc = configure_unicorn(args)
     globs.uc = uc
 
-    #-----------------------------------------------
-    # Do a fake interrupt at the beginning if that is requested
-    if args.initial_interrupt != -1:
-        # TODO: merge that with the native code
-        # TODO: make sure this works as intended
-        native.nvic_set_pending(args.initial_interrupt)
-        # vtor = bytes2int(uc.mem_read(nvic.VTOR_BASE, 4))
-        # make sure the vtor is set correctly
-        # nvic.NVIC.set_vtor(vtor)
-        # nvic.NVIC._enter_exception(args.initial_interrupt)
-        #native.nvic_set_pending(args.initial_interrupt)
 
     #-----------------------------------------------------
     # Emulate 1 instruction to kick off AFL's fork server
@@ -429,7 +342,6 @@ def main():
     # Collect garbage once in order to avoid doing so while fuzzing
     gc.collect()
     # gc.set_threshold(0, 0, 0)
-
     try:
         uc.emu_start(uc.reg_read(UC_ARM_REG_PC)|1, 0, 0, count=1)
     except UcError as e:
