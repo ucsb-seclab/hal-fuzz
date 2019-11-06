@@ -283,11 +283,10 @@ def configure_unicorn(args):
     else:
         print("No function hooks found. Registering no native basic block hook for that")
 
-    register_global_block_hook(uc)
-
     uc.symbols = name_to_addr
     uc.syms_by_addr = addr_to_name
     uc = add_sparkles(uc, args)
+    register_global_block_hook(uc)
     return uc
 
 def auto_int(x):
@@ -304,7 +303,7 @@ def main():
     parser.add_argument('-t', '--trace-funcs', dest='trace_funcs', default=False, action='store_true')
     parser.add_argument('-l', '--instr-limit', dest='instr_limit', type=int, default=globs.DEFAULT_BASIC_BLOCK_LIMIT, help="Maximum number of instructions to execute. 0: no limit. Default: {:d}".format(globs.DEFAULT_BASIC_BLOCK_LIMIT))
     parser.add_argument('-n', '--use-native', dest='use_native', default=True, action='store_true')
-    parser.add_argument("-b", '--breakpoint', dest='breakpoint', type=int)
+    parser.add_argument("-b", '--breakpoint', dest='breakpoint', type=auto_int)
     parser.add_argument('--native-lib', dest='native_lib', default=os.path.dirname(os.path.realpath(__file__))+'/native/native_hooks.so', help="Specify the path of the native library")
     parser.add_argument('--mmio-trace-out', dest='mmio_trace_file', default=None)#, type=argparse.FileType("w"))
     parser.add_argument('--ram-trace-out', dest='ram_trace_file', default=None)#, type=argparse.FileType("w"))

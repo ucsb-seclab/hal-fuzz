@@ -8,4 +8,6 @@ pip3 install -e .
 cd hal_fuzz/native
 make
 cd ../../../
-
+cd unicorn_mode/unicorn-1.0.1/bindings/python
+python setup.py install
+cd ../../../../
