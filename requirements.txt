@@ -1,0 +1,7 @@
+PyYAML
+intelhex
+archinfo
+clint
+capstone
+IPython
+ipdb
