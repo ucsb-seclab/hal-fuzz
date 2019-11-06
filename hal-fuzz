@@ -1,0 +1,5 @@
+#!/bin/sh
+HARNESS="python3 -m hal_fuzz.harness"
+$HARNESS $@
+
+
