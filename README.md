@@ -51,11 +51,26 @@ and you'll be dropped into a shell with everything set up!
 
 #### The old-fashioned way
 
-If you're on Ubuntu 18.04, try running ./setup.sh.  You'll need a root password (the underlying AFL-Unicorn setup script calls sudo for us).  Cross your fingers.
+If you're on Ubuntu 18.04, first make yourself a Python virtual environment:
+```
+mkvirtualenv -p /usr/bin/python3 halfuzz
+```
+
+...and then run:
+```
+./setup.sh
+```
+
+You'll need to be a user with sudo permissions.  
+Cross your fingers.
+
+### Now what?
 
 If all goes well, you can now use the ./hal-fuzz script to use the tool.
-We provide a selection of sample scripts which execute hal-fuzz in various configurations, to work with the binaries mentioned in our paper.  See the numerous "test" scripts in the root directory. (scripts suffixed with _parallel run a full-sized parallel AFL setup, so be careful you don't break your system with excess load!)
 
+Other useful points of interest include the `test_*.sh` scripts found in the root directly.  The "fuzz" scripts will start single-threaded AFL for that sample, the "parallel" scripts will start a huge parallel AFL ssession (be careful!) and the plain ones will simply run the binary once (useful for triage and debugging).
+
+The `csaw_tester_*.py` scripts relate to our use of hal-fuzz in the 2019 CSAW Embedded Systems Challenge.  These are for debugging, fuzzing, or validating challenge solutions.  More info on what these do and why can be found on the CSAW ESC website.
 
 ### Getting symbols
 
@@ -81,9 +96,9 @@ Your goal in writing handlers is to create two things: The python handler code i
 
 ```
 def add_two(uc):
-    number = uc.regs.r0
-    number += 2
-    uc.regs.r0 = number
+    number = uc.regs.r0 # Get the argument
+    number += 2         # Add two
+    uc.regs.r0 = number # Return the result
 ```
 
 Now this isn't the kind of function you'd normally want to intercept.  What about something with hardware in it? Let's say we have a function that takes n bytes from a serial port, and writes them into a buffer. We use the SerialModel for this.  For example:
