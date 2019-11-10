@@ -1,5 +1,7 @@
 #!/bin/sh
 #
+# EDG says: This script slightly tweaked to make installation more smooth
+#
 # american fuzzy lop - Unicorn-Mode build script
 # --------------------------------------
 #
@@ -37,12 +39,12 @@ echo
 
 echo "[*] Performing basic sanity checks..."
 
-if [ "$(id -u)" != "0" ]; then
-
-   echo "[-] Error: This script must be run as root/sudo" 
-   exit 1
-
-fi
+#if [ "$(id -u)" != "0" ]; then
+#
+#   echo "[-] Error: This script must be run as root/sudo" 
+#   exit 1
+#
+#fi
 
 if [ ! "`uname -s`" = "Linux" ]; then
 
@@ -92,12 +94,13 @@ for i in wget python automake autoconf sha384sum; do
 
 done
 
-if ! which easy_install > /dev/null; then
+# EDG: easy_install?? What are we? Cavepeople?
+#if ! which easy_install > /dev/null; then
+#
+#  echo "[-] Error: Python setup-tools not found. Run 'sudo apt-get install python-setuptools'."
+#  exit 1
 
-  echo "[-] Error: Python setup-tools not found. Run 'sudo apt-get install python-setuptools'."
-  exit 1
-
-fi
+#fi
 
 if echo "$CC" | grep -qF /afl-; then
 
@@ -116,7 +119,7 @@ if [ ! "$CKSUM" = "$UNICORN_SHA384" ]; then
 
   echo "[*] Downloading Unicorn v1.0.1 from the web..."
   rm -f "$ARCHIVE"
-  sudo -u ${USERNAME} wget -O "$ARCHIVE" -- "$UNICORN_URL" || exit 1
+  wget -O "$ARCHIVE" -- "$UNICORN_URL" || exit 1
 
   CKSUM=`sha384sum -- "$ARCHIVE" 2>/dev/null | cut -d' ' -f1`
 
@@ -136,7 +139,7 @@ fi
 echo "[*] Uncompressing archive (this will take a while)..."
 
 rm -rf "unicorn-1.0.1" || exit 1
-sudo -u ${USERNAME} tar xzf "$ARCHIVE" || exit 1
+tar xzf "$ARCHIVE" || exit 1
 
 echo "[+] Unpacking successful."
 
@@ -144,13 +147,13 @@ rm -rf "$ARCHIVE" || exit 1
 
 echo "[*] Applying patches..."
 
-sudo -u ${USERNAME} patch -p0 <patches/config.diff || exit 1
-sudo -u ${USERNAME} patch -p0 <patches/cpu-exec.diff || exit 1
-sudo -u ${USERNAME} patch -p0 <patches/translate-all.diff || exit 1
-sudo -u ${USERNAME} patch -p0 <patches/wfi.diff || exit 1
-sudo -u ${USERNAME} patch -R -p0 <patches/wfe.diff || exit 1
+patch -p0 <patches/config.diff || exit 1
+patch -p0 <patches/cpu-exec.diff || exit 1
+patch -p0 <patches/translate-all.diff || exit 1
+patch -p0 <patches/wfi.diff || exit 1
+patch -R -p0 <patches/wfe.diff || exit 1
 
-cd "unicorn-1.0.1" && sudo -u ${USERNAME} patch -p1 -R <../patches/halfuzz-expose-XPSR.diff && cd .. || exit 1
+cd "unicorn-1.0.1" && patch -p1 -R <../patches/halfuzz-expose-XPSR.diff && cd .. || exit 1
 
 echo "[+] Patching done."
 
@@ -165,13 +168,13 @@ echo "[+] Configuration complete."
 
 echo "[*] Attempting to build Unicorn (fingers crossed!)..."
 
-UNICORN_QEMU_FLAGS="--python=/usr/bin/python2" sudo -u ${USERNAME} -E make || exit 1
+UNICORN_QEMU_FLAGS="--python=/usr/bin/python2" make || exit 1
 
 echo "[+] Build process successful!"
 
 echo "[*] Installing patched unicorn binaries to local system..."
 
-make install || exit 1
+make && sudo make install || exit 1
 
 echo "[+] Unicorn installed successfully."
 
