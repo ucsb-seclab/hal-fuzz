@@ -49,6 +49,14 @@ docker run -it <image_hash> /bin/bash
 
 and you'll be dropped into a shell with everything set up!
 
+If you want to fuzz, make sure you do the following *on the host, as root* or AFL will get mad:
+
+```
+echo core >/proc/sys/kernel/core_pattern
+cd /sys/devices/system/cpu
+echo performance | tee cpu*/cpufreq/scaling_governor
+```
+
 #### The old-fashioned way
 
 If you're on Ubuntu 18.04, first make yourself a Python virtual environment:
