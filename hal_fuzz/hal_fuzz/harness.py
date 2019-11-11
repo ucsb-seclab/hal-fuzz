@@ -264,7 +264,7 @@ def configure_unicorn(args):
     if 'interrupt_triggers' in config:
         interrupt_triggers.init_triggers(uc, config['interrupt_triggers'])
 
-    use_nvic = ('use_nvic' in config and config['use_nvic'] is True) or (has_initial_interrupt and args.restore_state_file_name is not None)
+    use_nvic = ('use_nvic' in config and config['use_nvic'] is True)
     if use_nvic:
         vtor = globs.NVIC_VTOR_NONE
         num_vecs = globs.DEFAULT_NUM_NVIC_VECS

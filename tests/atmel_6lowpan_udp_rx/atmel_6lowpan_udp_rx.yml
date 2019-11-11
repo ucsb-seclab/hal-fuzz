@@ -10,6 +10,9 @@ memory_map:
     permissions: r-x, size: 0x200000}
   samr21_addrs: {base_addr: 0x80A000, permissions: "rw-", size: 0x1000}
 
+use_timers: True
+use_nvic: True
+
 handlers:
   system_clock_init:
     handler:
