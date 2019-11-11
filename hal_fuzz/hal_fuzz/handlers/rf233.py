@@ -1,6 +1,6 @@
 from ..models.ieee_802_15 import IEEE802_15_4
 from ..models.timer import Timer
-from ..nvic import NVIC
+from ..native import nvic_set_pending
 from ..util import int2bytes, bytes2int
 from collections import defaultdict
 from unicorn.arm_const import *
@@ -65,16 +65,15 @@ def rf233_on(uc):
 
 def _do_exti(uc, chan):
     # Set the EXTI, so that the CPU knows that we want a packet, not a button press or something
-    # TODO: This is ugly.  Can we do better? EDG doesn't think so, but... someone should try
+    # TODO: Replace this whole mess with a faux-terrupt.
     sr = 1 << (chan & 0x1f)
     uc.mem_write(0x40001810, int2bytes(sr))
     # Pend interrupt manually
-    NVIC.set_pending(20)  # That's EIC
+    nvic_set_pending(20)  # That's EIC
 
 def receive_packet(uc):
     # A packet arrives when this function is called.
     # For the purpose of fuzzing, we do this on a "timer-less timer"
-    # TODO: Something cooler than that
     IEEE802_15_4.rx_frame()
     _do_exti(uc, 0)
 
