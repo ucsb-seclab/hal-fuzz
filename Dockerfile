@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y sudo automake virtualenvwrapper python3
 COPY --chown=halfuzz . /home/halfuzz/hal-fuzz
 RUN cd /home/halfuzz/hal-fuzz/ && ./setup.sh
 
-RUN echo core >/proc/sys/kernel/core_pattern
 USER halfuzz
 WORKDIR /home/halfuzz/
 
