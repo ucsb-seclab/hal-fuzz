@@ -1,13 +1,19 @@
 # hal-fuzz: An HLE-based fuzzer for blob firmware
 
 hal-fuzz is the sleeker, faster, fuzzing-oriented version of HALucinator.
-It was developed as part of our paper (citation pending).
+It was developed as part of our paper "HALucinator: Firmware Re-Hosting through Abstraction Layer Emulation" at USENIX 2020.
 
-It was also used by the Shellphish hacking team to win the 2019 CSAW Embedded Security Challenge(https://github.com/TrustworthyComputing/csaw_esc_2019 ), by leveraging its rehositng, fuzzing, and debugging capabilities.
+It was also used by the Shellphish hacking team to win the 2019 CSAW Embedded Security Challenge(https://github.com/TrustworthyComputing/csaw_esc_2019), by leveraging its rehositng, fuzzing, and debugging capabilities.
 Check out a video of hal-fuzz grilling up a challenge automatically here: https://drive.google.com/file/d/1m4VzTQUBMb1xOZN9GmWQZS-Qij3v0koF/view
 
 
 If you're interested in re-hosting entire multi-node systems, or re-hosting firmware needing complex interactions with the outside world, you might want to try the original, found here: https://github.com/embedded-sec/halucinator 
+
+#### Cite us!
+
+Using hal-fuzz for research? Please cite our USENIX paper.  More details at:
+http://subwire.net/publication/halucinator/
+
 
 ## What is this crazy thing?
 
@@ -21,7 +27,7 @@ In order to make hal-fuzz work at a reasonable speed, we made a number of notabl
 - *Deterministic Timers*: Timers are based on block counts, not real time.  This enables deterministic fuzzing of otherwise-asynchronous code.
 - *Native Handlers*: Normal AFL-Unicorn/Python suffers from performance issues when transitioning between Unicorn and its Python bindings.  Unfortunately, Unicorn also does not provide a "conditional hook"; you can hook every block in the program, but not a specific block.
 We therefore provide a native library to enable this in a performant way, causing a massive (about 8x) speedup.
-- *Interupts* and "faux-terrupts": Interrupts are a part of life in embedded.  Unfortunately, one aspect that was lost when QEMU was slimmed-down into Unicorn was the entire notion of interrupts.  We add this notion back, in the usual HLE way, using a model of the Cortex-M NVIC. This implements the entry and exit procedures described in the ISA docs well enough to run actual RTOS bits.
+- *Interrupts* and "faux-terrupts": Interrupts are a part of life in embedded.  Unfortunately, one aspect that was lost when QEMU was slimmed-down into Unicorn was the entire notion of interrupts.  We add this notion back, in the usual HLE way, using a model of the Cortex-M NVIC. This implements the entry and exit procedures described in the ISA docs well enough to run actual RTOS bits.
 However, many firmware/libraries will not actually need full interrupt support, and instead need something simpler, like an asynchronous callback.  This callback is passed as a function pointer, and is expected to be called in an Interrupt Service Routine (ISR).  Under normal circumstances, which ISR you use is hardware-dependent.  We'd prefer not to worry about that with HLE, so we created the new concept of "faux-terrupts", where a handler (or any Python hook) can freely enter interrupt mode with the IRQ of its chosing, and execute these callbacks, without needing hardware-specific knowledge.
 As part of this, we also enable the manipulation of the ARM Cortex M status registers from Unicorn, a feature currently missing from the mainline version.
 
