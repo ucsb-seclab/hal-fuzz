@@ -3,7 +3,7 @@
 hal-fuzz is the sleeker, faster, fuzzing-oriented version of HALucinator.
 It was developed as part of our paper "HALucinator: Firmware Re-Hosting through Abstraction Layer Emulation" at USENIX 2020.
 
-It was also used by the Shellphish hacking team to win the 2019 CSAW Embedded Security Challenge(https://github.com/TrustworthyComputing/csaw_esc_2019), by leveraging its rehositng, fuzzing, and debugging capabilities.
+It was also used by the Shellphish hacking team to win the 2019 CSAW Embedded Security Challenge(https://github.com/TrustworthyComputing/csaw_esc_2019), by leveraging its rehosting, fuzzing, and debugging capabilities.
 Check out a video of hal-fuzz grilling up a challenge automatically here: https://drive.google.com/file/d/1m4VzTQUBMb1xOZN9GmWQZS-Qij3v0koF/view
 
 
