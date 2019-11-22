@@ -5,3 +5,4 @@ clint
 capstone
 IPython
 ipdb
+dpkt
