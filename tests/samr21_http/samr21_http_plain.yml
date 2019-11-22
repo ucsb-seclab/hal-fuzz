@@ -6,8 +6,8 @@ memory_map:
   flash: {base_addr: 0x0, file: ./samr21_http.bin,
     permissions: r-x, size: 0x800000}
 
-use_nvic: False
-use_timers: False
+use_nvic: True
+use_timers: True
 
 #handlers:
 #  dummy:

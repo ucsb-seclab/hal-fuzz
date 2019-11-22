@@ -10,3 +10,6 @@ memory_map:
 handlers:
   tcp_next_iss:
     handler: hal_fuzz.handlers.lwip.tcp_next_iss_hack
+
+use_timers: True
+use_nvic: True

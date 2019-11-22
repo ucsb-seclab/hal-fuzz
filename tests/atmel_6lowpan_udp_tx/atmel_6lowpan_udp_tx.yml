@@ -16,3 +16,6 @@ handlers:
     addr: 0x00001EB0
   i2c_master_read_packet_wait:
     handler: hal_fuzz.handlers.rf233.get_edbg_eui64
+
+use_nvic: True
+use_timers: True
