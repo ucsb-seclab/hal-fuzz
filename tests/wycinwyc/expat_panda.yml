@@ -1,6 +1,6 @@
 include:
-  - ./../../configs/hw/cortexm_memory.yml
-  - ./../../configs/hals/mbed.yml
+  - ../../configs/hw/cortexm_memory.yml
+  - ../../configs/hals/mbed.yml
   - ./expat_panda_addrs.yml
 
 memory_map:
@@ -12,15 +12,13 @@ handlers:
     handler: hal_fuzz.handlers.fuzz.return_fuzz_byte
   _ZN4mbed6Stream4getcEv:
     handler: hal_fuzz.handlers.fuzz.return_fuzz_byte
+  memcpy:
+    handler: hal_fuzz.handlers.generic.malloc.memcpy
   malloc:
     handler: hal_fuzz.handlers.generic.malloc.malloc
-    addr: 0x0800E968
   free:
     handler: hal_fuzz.handlers.generic.malloc.free
-    addr: 0x0800E978
   calloc:
     handler: hal_fuzz.handlers.generic.malloc.calloc
-    addr: 0x08013524
   realloc:
     handler: hal_fuzz.handlers.generic.malloc.realloc
-    addr: 0x080103D0
