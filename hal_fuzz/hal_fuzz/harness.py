@@ -231,7 +231,11 @@ def configure_unicorn(args):
             # Actually hook the thing
             print("Handling function %s at %#08x with %s" % (fname, handler_desc['addr'], handler_desc['handler']))
             add_func_hook(uc, handler_desc['addr'], handler_desc['handler'], do_return=handler_desc['do_return'])
-
+            
+    if 'opcodes' in config and config['opcodes']:
+        for opcode, code in config['opcodes'].items():
+            add_intr_hook(uc,code['name'])
+            print("Handling opcode %s"%(code['name']))
 
     if args.ram_trace_file is not None:
         trace_mem.init_ram_tracing(uc, args.ram_trace_file, config)

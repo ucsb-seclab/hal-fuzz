@@ -22,3 +22,12 @@ handlers:
     handler: hal_fuzz.handlers.generic.malloc.calloc
   realloc:
     handler: hal_fuzz.handlers.generic.malloc.realloc
+opcodes:
+  mov:
+    name: MOV
+  mvn:
+    name: MVN
+  bic:
+    name: BIC
+  adc:
+    name: ADC
