@@ -106,6 +106,7 @@ def force_crash(uc_error):
     from .exit import do_exit
     if uc_error.errno in mem_errors:
         # Memory error - throw SIGSEGV
+        print("-------Memory Error Detected-------")
         sig = signal.SIGSEGV
     elif uc_error.errno == UC_ERR_INSN_INVALID:
         # Invalid instruction - throw SIGILL
