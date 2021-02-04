@@ -1,6 +1,6 @@
 from unicorn.arm_const import *
 from unicorn.unicorn_const import *
-from ...util import crash
+from ...util import crash, crash_memory
 
 """
 Quick and unoptimized implementation of dynamic memory management allowing to
@@ -17,7 +17,9 @@ def _calc_aligned_size(size):
     # TODO: alignment guarantees
     #if res % 4 != 0:
     #    res += (4 - (res % 4))
+
     return res
+    # return res
 
 def _calc_retaddr(baseaddr, size):
     return baseaddr + _calc_aligned_size(size) - size
@@ -26,20 +28,24 @@ def _malloc(uc, size):
     global wilderness
     
     aligned_size = _calc_aligned_size(size)
-
+   
     # Non-empty list in free_chunks?
     if aligned_size in free_chunks and free_chunks[aligned_size]:
         base_addr = free_chunks[aligned_size].pop()
     else:
         base_addr = wilderness
-    print(size)
-    result = _calc_retaddr(base_addr, size)
-    
-    allocated_chunks[result] = (base_addr, aligned_size)
+
+    result = _calc_retaddr(base_addr, size+PAGE_SIZE)
+    # print(result)
+    allocated_chunks[result] = (base_addr-PAGE_SIZE, aligned_size+PAGE_SIZE+PAGE_SIZE)
+    print(allocated_chunks[result])
     
     if base_addr == wilderness:
         uc.mem_map(wilderness, aligned_size, UC_PROT_READ | UC_PROT_WRITE)
-        wilderness += aligned_size + PAGE_SIZE
+        uc.mem_map(wilderness-PAGE_SIZE, PAGE_SIZE, UC_PROT_NONE)
+        uc.mem_map(wilderness+aligned_size, PAGE_SIZE, UC_PROT_NONE)
+
+        wilderness += aligned_size + PAGE_SIZE + PAGE_SIZE
     else:
         uc.mem_protect(base_addr, aligned_size, UC_PROT_READ | UC_PROT_WRITE)
     uc.mem_write(base_addr, b'\xfa'*aligned_size)
@@ -50,10 +56,11 @@ def _free(uc, addr):
     if addr not in allocated_chunks:
         print("Double or arbitrary free detected, crashing")
         crash()
-
-    base_addr, aligned_size = allocated_chunks[addr]
-    uc.mem_write(base_addr, b'\xfd'*aligned_size)
-
+    try:
+        allocated_chunks[addr] = base_addr-PAGE_SIZE, aligned_size+PAGE_SIZE+PAGE_SIZE
+        uc.mem_write(base_addr, b'\xfd'*aligned_size+PAGE_SIZE+PAGE_SIZE)
+    except:
+        crash_memory(addr)
     if aligned_size not in free_chunks:
         free_chunks[aligned_size] = [base_addr]
     else:
@@ -110,8 +117,11 @@ def realloc(uc):
 def malloc(uc):
     size = uc.reg_read(UC_ARM_REG_R0)
     res = _malloc(uc, size)
+    #print("res is",res)
     uc.reg_write(UC_ARM_REG_R0, res)
+    print("RedZonemalloc. size=0x{:x} -> 0x{:x}".format(PAGE_SIZE, res-PAGE_SIZE))
     print("malloc. size=0x{:x} -> 0x{:x}".format(size, res))
+    print("RedZonemalloc. size=0x{:x} -> 0x{:x}".format(PAGE_SIZE, res+size+PAGE_SIZE))
 
 def memp_free(uc):
     addr = uc.reg_read(UC_ARM_REG_R1)
@@ -134,10 +144,10 @@ def memcpy(uc):
     uc.reg_write(UC_ARM_REG_R0, res)
 
 def _memcpy(uc, dest, src, n):
-    if not dest or not src:
-        print("Invalid memory write, crashing")
-        print("Null pointer dereference (dest= 0x{:x}, src= 0x{:x})".format(dest, src))
-        crash()
+    # if not dest or not src:
+    #     print("Invalid memory write, crashing")
+    #     print("Null pointer dereference (dest= 0x{:x}, src= 0x{:x})".format(dest, src))
+    #     crash_memory(dest)
 
     base_addr , aligned_size = (0, 0)
     for chunk in allocated_chunks:
@@ -152,8 +162,11 @@ def _memcpy(uc, dest, src, n):
     if not base_addr:
         # memcpy from stack to stack
         content = uc.mem_read(src, n)
-        uc.mem_write(dest, bytes(content))
-        return dest
+        try:
+            uc.mem_write(dest, bytes(content))
+            return dest
+        except:
+            crash_memory(src)
 
     curr_size = base_addr + aligned_size - dest
     if curr_size < n:

@@ -235,7 +235,7 @@ def configure_unicorn(args):
             
     if 'opcodes' in config and config['opcodes']:
         for opcode, code in config['opcodes'].items():
-            add_intr_hook(uc,code['name'])
+            # add_intr_hook(uc,code['name'])
             print("Handling opcode %s"%(code['name']))
 
     if args.ram_trace_file is not None:

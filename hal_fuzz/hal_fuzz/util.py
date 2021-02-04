@@ -28,6 +28,10 @@ def crash(sig=signal.SIGSEGV):
     print("-------------------------------- CRASH DETECTED-------------------------")
     os.kill(os.getpid(), sig)
 
+def crash_memory(valu,sig=signal.SIGSEGV):
+    print("-------------------------------- CRASH DETECTED-------------------------")
+    print("crash detected on memory(locate= 0x",hex(valu))
+    os.kill(os.getpid(), sig)
 
 def ensure_rw_mapped(uc, start, end):
     start = start & (~0xfff)
